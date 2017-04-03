@@ -64,3 +64,29 @@ class IntermediateRepr(object):
 
     def __getitem__(self, key):
         raise NotImplementedError()
+
+class AudioRepr(IntermediateRepr):
+    def __init__(self, sampleRate = 44100, sampleRange = (None, None),
+                 data = None, parameters = None, sampleType = int, 
+                 bitDepth = 16, audioFile = None):
+        '''
+        TODO: how to pull in audio data?
+        '''
+
+        super(AudioRepr, self).__init__(sampleRate  = sampleRate,
+                                        sampleRange = (0, 2**bitDepth),
+                                        data        = data,
+                                        parameters  = parameters)
+        self._bitDepth   = bitDepth
+        self._sampleType = sampleType
+        self._audioFile  = audioFile
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __getitem__(self, key):
+        '''
+        TODO: Error check? Extend?
+        '''
+        return self._data[key]
+
