@@ -90,3 +90,18 @@ class AudioRepr(IntermediateRepr):
         '''
         return self._data[key]
 
+class ParametricRepr(IntermediateRepr):
+    def __init__(self, sampleRate = None, sampleRange = (0, 255),
+                 data = None, parameters = None, dims = 2, sampleType = int):
+
+        super(ParametricRepr, self).__init__(sampleRate = sampleRate,
+                                        sampleRange  = sampleRange,
+                                        data       = data,
+                                        parameters = parameters)
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __getitem(self, key):
+        return self._data[key]
+
