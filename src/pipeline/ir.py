@@ -38,7 +38,7 @@ class IntermediateRepr(object):
         self._data        = []
 
     def get_sample_rate(self):
-        raise self._sampleRate
+        return self._sampleRate
 
     def get_sample_range(self):
         return self._sampleMin, self._sampleMax
