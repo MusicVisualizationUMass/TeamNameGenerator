@@ -90,3 +90,5 @@ ENV/
 
 # VIM
 *.swp
+# Idea
+.idea/
