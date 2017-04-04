@@ -12,7 +12,7 @@ Overview:
         * AudioRepr(IntermediateRepr)
         * ParametricRepr(IntermediateRepr)
         * ModelledRepr(IntermediateRepr)
-        * Visualizable(object)
+        * VisualizableMixin(object)
     
     where Visualizable will be a trait extended by ModelledRepr. 
 
@@ -66,7 +66,17 @@ class IntermediateRepr(object):
     def __getitem__(self, key):
         raise NotImplementedError()
 
+class VisualizableMixin(object):
+    ''' Mixin describing a visualizable class '''
+
+    def visualize(self):
+        raise NotImplementedError()
+
 class AudioRepr(IntermediateRepr):
+    '''
+    AudioRepr represents an audio stream/array.
+    TODO: Document
+    '''
     def __init__(self, sampleRate = 44100, sampleRange = (None, None),
                  dataIn = None, parameters = None, sampleType = int, 
                  bitDepth = 16, audioFile = None):
@@ -114,11 +124,14 @@ class ParametricRepr(IntermediateRepr):
     def __getitem(self, key):
         return self._data[key]
 
-class ModelledRepr(IntermediateRepr):
+class ModelledRepr(IntermediateRepr, VisualizableMixin):
     def __init__(self, sampleRate = 24, sampleRange = (None, None),
                  dataIn = None, parameters = None):
         super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
                                            sampleRange = sampleRange,
                                            dataIn      = dataIn,
                                            parameters  = parameters)
-        pass
+    def visualize(self):
+        # TODO
+        raise NotImplementedError('todo')
+
