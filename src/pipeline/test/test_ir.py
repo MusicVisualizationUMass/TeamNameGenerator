@@ -1,6 +1,6 @@
 import unittest as ut
-from pipeline.ir import ( IntermediateRepr, AudioRepr, ParametricRepr,
-                          ModelledRepr)
+from pipeline.ir import (IntermediateRepr, AudioRepr, ParametricRepr,
+                         ModelledRepr)
 
 class TestIR(ut.TestCase):
     
@@ -18,11 +18,11 @@ class TestIR(ut.TestCase):
                               sampleRange = (0, 32), 
                               dataIn      = 'sample data string', 
                               parameters  = {'this is': 'a test'} )
-        self.assertEqual(ir.get_sample_rate(), 24)
-        self.assertEqual(ir.get_sample_range(), (0, 32))
-        self.assertEqual(ir.get_sample_min(), 0)
-        self.assertEqual(ir.get_sample_max(), 32)
-        self.assertEqual(ir.get_data(), [])
+        self.assertEqual(ir.get_sample_rate()   , 24)
+        self.assertEqual(ir.get_sample_range()  , (0, 32))
+        self.assertEqual(ir.get_sample_min()    , 0)
+        self.assertEqual(ir.get_sample_max()    , 32)
+        self.assertEqual(ir.get_data()          , [])
         self.assertEqual(ir.get_param('this is'), 'a test')
 
 
@@ -59,4 +59,19 @@ class TestIR(ut.TestCase):
         
         
 
+class TestAudioRepr(TestIR):
+    '''This extends TestIR...'''
+    def test_air_constructor_default_vals(self):
+        try:
+            air = AudioRepr()
+            self.assertEqual(air._sampleRate, 44100)
+            self.assertEqual(air._bitDepth  , 16   )
+            self.assertEqual(air._sampleMin , 0    )
+            self.assertEqual(air._sampleMax , 2**16)
+            self.assertEqual(air._sampleType, int  )
+            self.assertEqual(air._audioFile , None )
 
+        except Exception as e:
+            print("Caught Exception: {}".format(e))
+            self.assertFalse(True)
+        
