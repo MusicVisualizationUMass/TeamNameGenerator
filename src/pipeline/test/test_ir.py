@@ -18,9 +18,45 @@ class TestIR(ut.TestCase):
                               sampleRange = (0, 32), 
                               dataIn      = 'sample data string', 
                               parameters  = {'this is': 'a test'} )
-        self.assertEquals(ir.get_sample_rate(), 24)
-        self.assertEquals(ir.get_sample_range(), (0, 32))
-        self.assertEquals(ir.get_sample_min(), 0)
-        self.assertEquals(ir.get_sample_max(), 32)
-        self.assertEquals(ir.get_data(), [])
-        self.assertEquals(ir.get_param('this is'), 'a test')
+        self.assertEqual(ir.get_sample_rate(), 24)
+        self.assertEqual(ir.get_sample_range(), (0, 32))
+        self.assertEqual(ir.get_sample_min(), 0)
+        self.assertEqual(ir.get_sample_max(), 32)
+        self.assertEqual(ir.get_data(), [])
+        self.assertEqual(ir.get_param('this is'), 'a test')
+
+
+    def test_iter(self):
+        
+        ir = IntermediateRepr(sampleRate  = 24, 
+                              sampleRange = (0, 32), 
+                              dataIn      = 'sample data string', 
+                              parameters  = {'this is': 'a test'} )
+        
+
+        total = 0   # total number of elements
+        for i in iter(ir):
+            total += 1
+        self.assertEqual(total, 0) # Should be empty
+
+        ir._data = range(100)
+        
+        for i in iter(ir):
+            total += 1
+
+        self.assertEqual(total, 100)
+
+    def test_getitem(self):
+        ir = IntermediateRepr(sampleRate  = 24, 
+                              sampleRange = (0, 32), 
+                              dataIn      = 'sample data string', 
+                              parameters  = {'this is': 'a test'} )
+
+        ir._data = range(100)
+
+        for i in range(100):
+            self.assertEqual(ir[i], i)
+        
+        
+
+
