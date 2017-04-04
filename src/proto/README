@@ -1,0 +1,3 @@
+This is a place for prototyping. Each family of prototypes should be in their
+own directory tree; for example, if you are working on some aubio prototypes,
+work under the aubio directory.
