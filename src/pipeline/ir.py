@@ -38,7 +38,7 @@ class IntermediateRepr(object):
         self._data        = []
 
     def get_sample_rate(self):
-        raise self._sampleRate
+        return self._sampleRate
 
     def get_sample_range(self):
         return self._sampleMin, self._sampleMax
@@ -61,10 +61,10 @@ class IntermediateRepr(object):
         return None
 
     def __iter__(self):
-        raise NotImplementedError()
+        return iter(self._data)
 
     def __getitem__(self, key):
-        raise NotImplementedError()
+        return self._data[key]
 
 class VisualizableMixin(object):
     ''' Mixin describing a visualizable class '''
