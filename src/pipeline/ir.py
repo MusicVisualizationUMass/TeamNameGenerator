@@ -116,9 +116,9 @@ class ParametricRepr(IntermediateRepr):
 
 class ModelledRepr(IntermediateRepr):
     def __init__(self, sampleRate = 24, sampleRange = (None, None),
-                 data = None, parameters = None):
+                 dataIn = None, parameters = None):
         super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
                                            sampleRange = sampleRange,
-                                           data        = data,
+                                           dataIn      = dataIn,
                                            parameters  = parameters)
         pass
