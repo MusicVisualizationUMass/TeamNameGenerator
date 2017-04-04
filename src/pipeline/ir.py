@@ -61,10 +61,10 @@ class IntermediateRepr(object):
         return None
 
     def __iter__(self):
-        raise NotImplementedError()
+        return iter(self._data)
 
     def __getitem__(self, key):
-        raise NotImplementedError()
+        return self._data[key]
 
 class VisualizableMixin(object):
     ''' Mixin describing a visualizable class '''
