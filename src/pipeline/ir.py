@@ -21,20 +21,21 @@ TODO: All of it
 
 class IntermediateRepr(object):
     def __init__(self, sampleRate = None, sampleRange = (None, None),
-                 data = None, parameters = None):
+                 dataIn = None, parameters = None):
         '''
         sampleRate: rates per second
         sampleRange: (min, max) for possible sample values.
-        data: preexisting data being passed in
+        dataIn: preexisting data being passed in to be processed
         parameters: a parameter dictionary passed for extra information
         '''
         self._sampleRate  = sampleRate
         self._sampleMin   = sampleRange[0]
         self._sampleMax   = sampleRange[1]
-        self._data        = data
+        self._dataIn      = dataIn
         self._params      = {}
         if parameters:
             self._params  = parameters
+        self._data        = []
 
     def get_sample_rate(self):
         raise self._sampleRate
@@ -67,7 +68,7 @@ class IntermediateRepr(object):
 
 class AudioRepr(IntermediateRepr):
     def __init__(self, sampleRate = 44100, sampleRange = (None, None),
-                 data = None, parameters = None, sampleType = int, 
+                 dataIn = None, parameters = None, sampleType = int, 
                  bitDepth = 16, audioFile = None):
         '''
         TODO: how to pull in audio data?
@@ -75,7 +76,7 @@ class AudioRepr(IntermediateRepr):
 
         super(AudioRepr, self).__init__(sampleRate  = sampleRate,
                                         sampleRange = (0, 2**bitDepth),
-                                        data        = data,
+                                        dataIn      = dataIn,
                                         parameters  = parameters)
         self._bitDepth   = bitDepth
         self._sampleType = sampleType
@@ -91,13 +92,21 @@ class AudioRepr(IntermediateRepr):
         return self._data[key]
 
 class ParametricRepr(IntermediateRepr):
-    def __init__(self, sampleRate = None, sampleRange = (0, 255),
-                 data = None, parameters = None, dims = 2, sampleType = int):
-
-        super(ParametricRepr, self).__init__(sampleRate = sampleRate,
-                                        sampleRange  = sampleRange,
-                                        data       = data,
-                                        parameters = parameters)
+    '''
+    ParametricRepr: represents the parametrized phase of translation.
+    '''
+    def __init__(self, sampleRate = 24, sampleRange = (0, 255),
+                 dataIn = None, parameters = None, dims = 2, sampleType = int):
+        '''
+        dims: number of dimensions to extract from dataIn
+        sampleType: type of sample to create from dataIn
+        '''
+        super(ParametricRepr, self).__init__(sampleRate  = sampleRate,
+                                            sampleRange  = sampleRange,
+                                            dataIn       = dataIn,
+                                            parameters   = parameters)
+        self._dims       = dims
+        self._sampleType = sampleType
 
     def __iter__(self):
         return iter(self._data)
@@ -105,3 +114,11 @@ class ParametricRepr(IntermediateRepr):
     def __getitem(self, key):
         return self._data[key]
 
+class ModelledRepr(IntermediateRepr):
+    def __init__(self, sampleRate = 24, sampleRange = (None, None),
+                 data = None, parameters = None):
+        super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
+                                           sampleRange = sampleRange,
+                                           data        = data,
+                                           parameters  = parameters)
+        pass
