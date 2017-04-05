@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "590c000ef4dcf078d9de15cbefce5de48119cb6b738f7bcafc751257db35d8ff"
+            "sha256": "40a6f24ca1465c1de6132b34cef443d939ccf897d08aadd657495c6ca66c57aa"
         },
         "requires": {},
         "sources": [
@@ -21,14 +21,5 @@
             "version": "==1.12.1"
         }
     },
-    "develop": {
-        "aubio": {
-            "hash": "sha256:c5e45f37947b4e6558a8bf98d93f7305a831842618302e3c940c7be023f3257c",
-            "version": "==0.4.4"
-        },
-        "numpy": {
-            "hash": "sha256:9ce673bb7b6240b94b60b52186f5c0825f4b31e8191c8bc7412a7d0348fca2cd",
-            "version": "==1.12.1"
-        }
-    }
+    "develop": {}
 }
