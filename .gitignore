@@ -1,7 +1,7 @@
-media/*.mp3
-media/*.wav
-media/*.ogg
-media/*.mp4
+*.mp3
+*.wav
+*.ogg
+*.mp4
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
