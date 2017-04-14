@@ -34,7 +34,8 @@ class LinearOscillatorModel(ModelledRepr):
                  dataInFPS        = 48,
                  parameters       = None, 
                  number_of_points = 1024,
-                 hook             = 1.0):
+                 hook             = 1.0,
+                 damping          = 0.9):
 
         super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
                                            sampleRange = sampleRange,
@@ -45,9 +46,11 @@ class LinearOscillatorModel(ModelledRepr):
         # points contain N (pos, velocity) vectors.
         # force is calculated in real time
         self.points = zeros(shape = (number_of_points,2), 
-                            dtype = np.float64)
+                            dtype = float) # TODO: np.float64
         self.data_in_fps = dataInFPS
+        self.fps  = sampleRate
         self.hook = hook    # hooks constant
+        self.damping = damping # 0 = max damping; 1.0 = no damping
 
         # Set up data-in
         if dataIn == None:
@@ -56,16 +59,61 @@ class LinearOscillatorModel(ModelledRepr):
                 # Create a generator that sine stuff
                 C = self.number_of_points / 2
                 t = 0.0
-                while True:
-                    t += 0.11
+                while t < 300:
+                    t += 0.35
                     yield (C * sin(t) + C, cos(t))
                     
 
             print("Assigning dataIn")
             self.dataIn = iter(f())
+        else:
+            self.dataIn = iter(dataIn())
 
     def __iter__(self):
+        dt          = 1.0 / self.fps          # delta t
+        didt        = 1.0 / self.data_in_fps  # delta t for datain
+        myTime      = 0.0  # Current time in simulation
+        dataInTime  = 0.0  # Current time in data extraction
+        hook   = self.hook
+        N = self.number_of_points
+
         while True:
-            ind, amp = next(self.dataIn)
-            self.points[int(ind)] += amp
-            A = ndarray(shape = self.number_of_points, buffer = self.points)
+            points = self.points
+            freq, amp = next(self.dataIn)
+            print("freq = {}; amp = {}".format(int(freq), amp))
+            points[int(freq)][1] += amp * dt   # acceleration * delta t
+            print (dataInTime, myTime)
+
+            # Update velocity of points
+            A = zeros(shape = (self.number_of_points, 2), dtype = float)
+            for i in range(N):  
+                # TODO: Note that this can be made more efficient with fewer
+                # references (2/iter instead of 3/iter...)
+
+                y_l = points[i-1][0] 
+                y   = points[i][0]
+                y_r = points[ (i+1) % N][0]
+
+                # TODO: Make this more accurate? This is just looking at the y
+                # delta rather than doing the trig. More efficient BUT
+                # innaccurate...
+                F_l = hook * (y_l - y)  # Force Right
+                F_r = hook * (y_r - y)  # Force Left
+                F_v = -1 * hook * y     # Vertical Force
+                delta_v = (F_l + F_r + F_v) * didt
+                
+                # Update the velocity, storing in A
+                A[i][1] = (points[i][1] + delta_v)*self.damping
+                # Update position
+                A[i][0] += didt * points[i][1]
+            # Now update the points locations
+            dataInTime += didt
+            if dataInTime > myTime:
+                myTime += dt
+                yield A
+
+            # Now, update self.points to point at our new array of points
+            self.points = A
+
+        
+
