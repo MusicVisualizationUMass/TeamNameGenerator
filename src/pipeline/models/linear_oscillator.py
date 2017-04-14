@@ -17,16 +17,24 @@ extensions easier.
 '''
 
 from pipeline.ir import ModelledRepr
+import numpy as np
+from numpy import ndarray, full, zeros
+from math import sin, cos
 
-class CircularOscillatorModel(ModelledRepr):
+# Don't know what we'll need...
+from itertools import count, cycle, repeat
+
+class LinearOscillatorModel(ModelledRepr):
     # TODO: include params for ModelledRepr
 
     def __init__(self, 
                  sampleRate       = 24, 
                  sampleRange      = (None, None),
                  dataIn           = None, 
+                 dataInFPS        = 48,
                  parameters       = None, 
-                 number_of_points = 1024):
+                 number_of_points = 1024,
+                 hook             = 1.0):
 
         super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
                                            sampleRange = sampleRange,
@@ -34,7 +42,30 @@ class CircularOscillatorModel(ModelledRepr):
                                            parameters  = parameters)
 
         self.number_of_points = number_of_points
-        self.points = [0.0 for i in range(self.number_of_points)]
+        # points contain N (pos, velocity) vectors.
+        # force is calculated in real time
+        self.points = zeros(shape = (number_of_points,2), 
+                            dtype = np.float64)
+        self.data_in_fps = dataInFPS
+        self.hook = hook    # hooks constant
 
-    def increment_time(self):
-        pass
+        # Set up data-in
+        if dataIn == None:
+            print("dataIn == None")
+            def f():
+                # Create a generator that sine stuff
+                C = self.number_of_points / 2
+                t = 0.0
+                while True:
+                    t += 0.11
+                    yield (C * sin(t) + C, cos(t))
+                    
+
+            print("Assigning dataIn")
+            self.dataIn = iter(f())
+
+    def __iter__(self):
+        while True:
+            ind, amp = next(self.dataIn)
+            self.points[int(ind)] += amp
+            A = ndarray(shape = self.number_of_points, buffer = self.points)
