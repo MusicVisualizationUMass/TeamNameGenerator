@@ -4,7 +4,7 @@ define the Pipeline class
 Date:   4/4/17
 Author: Benjamin Kushigian
 
-TODOs: 
+TODOs:
     * Just about everything
 '''
 
