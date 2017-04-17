@@ -54,12 +54,9 @@ class LinearOscillatorModel(ModelledRepr):
                                            dataIn      = dataIn,
                                            parameters  = parameters)
 
-        shape = (number_of_points, 2)
-        self.number_of_points = number_of_points
-        # points contain N (pos, velocity) vectors.
-        # acceleration is calculated in real time
-        self.points = zeros(shape = shape, 
-                            dtype = float)
+        shape = (number_of_points, 2)              # Shape of points
+        self.number_of_points = number_of_points   # How many points in the line
+        self.points = zeros(shape = shape, dtype = float)
         self.data_in_fps = dataInFPS  # Frames Per Second for input data
         self.fps  = sampleRate        # frames per second for OUR data
         self.hook = hook              # hooks constant
