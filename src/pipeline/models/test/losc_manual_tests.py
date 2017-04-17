@@ -30,14 +30,7 @@ if __name__ == '__main__':
             damping          = 0.9999)
 
     I = iter(M)
-#    l = list(I) # [ [pt0_pos, pt0_vel]
-#                #   [pt1_pos, pt1_vel],
-#                #   [pt2_pos, pt3_vel],
-#                #   [pt3_pos, pt3_vel],
-#                #   [pt4_pos, pt4_vel],
-#                #          . . .      ,
-#                #   [ptn_pos, ptn_vel]]
-#
+
     plt.ion()            # Interactive I/O
     
 

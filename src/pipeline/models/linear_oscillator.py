@@ -118,8 +118,8 @@ class LinearOscillatorModel(ModelledRepr):
 
             # First, update A1
             for i, val in enumerate(data):
-                freq = int((N / (dshape[0] + 1)) * i) % N
-                print ("i = {}, freq = {}, val = {}".format(i, freq, val))
+                freq = int(10 * (N / (dshape[0] + 1)) * i) % N
+                # print ("i = {}, freq = {}, val = {}".format(i, freq, val))
                 # We update our current data's velocity at the appropriate place
                 A1[freq][1] += val * didt   # velocity += acceleration * delta t
 
