@@ -24,6 +24,8 @@ from math import sin, cos
 # Don't know what we'll need...
 from itertools import count, cycle, repeat
 
+DEBUG = False
+
 class LinearOscillatorModel(ModelledRepr):
     # TODO: include params for ModelledRepr
 
@@ -36,84 +38,131 @@ class LinearOscillatorModel(ModelledRepr):
                  number_of_points = 1024,
                  hook             = 1.0,
                  damping          = 0.9):
+        '''
+        sampleRate: number of samples per second to be _emmited_
+        sampleRange: (min,max) of possible values
+        dataIn: generator/iterator/array for input data of the form (p_1, p_2).
+        dataInFPS: number of samples per second that that dataIn is emitting
+        parameters: dictionary of parameters to be passed in
+        number_of_points: how many points on our line?
+        hook: constant in Hooks Constant
+        damping: multiplicative factor to dampen velocities
+        '''
 
         super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
                                            sampleRange = sampleRange,
                                            dataIn      = dataIn,
                                            parameters  = parameters)
 
+        shape = (number_of_points, 2)
         self.number_of_points = number_of_points
         # points contain N (pos, velocity) vectors.
-        # force is calculated in real time
-        self.points = zeros(shape = (number_of_points,2), 
-                            dtype = float) # TODO: np.float64
-        self.data_in_fps = dataInFPS
-        self.fps  = sampleRate
-        self.hook = hook    # hooks constant
-        self.damping = damping # 0 = max damping; 1.0 = no damping
+        # acceleration is calculated in real time
+        self.points = zeros(shape = shape, 
+                            dtype = float)
+        self.data_in_fps = dataInFPS  # Frames Per Second for input data
+        self.fps  = sampleRate        # frames per second for OUR data
+        self.hook = hook              # hooks constant
+        self.damping = damping        # 0 = max damping; 1.0 = no damping
 
         # Set up data-in
         if dataIn == None:
-            print("dataIn == None")
+            
             def f():
                 # Create a generator that sine stuff
                 C = self.number_of_points / 2
+                N = self.number_of_points / 2
+                print ("C = {}".format(C))
                 t = 0.0
-                while t < 300:
-                    t += 0.35
-                    yield (C * sin(t) + C, cos(t))
-                    
+                while t < 30:
+                    t += 0.01
+                    print("t = {}".format(t))
+                    yield (N, 19 * cos(t))
+                    N = (N + 1) % self.number_of_points
+                while True:
+                    yield(0, 0)
 
-            print("Assigning dataIn")
             self.dataIn = iter(f())
         else:
+            # XXX: This might break! See how data will be passed in...
             self.dataIn = iter(dataIn())
 
     def __iter__(self):
+        '''Create an iterator that outputs data that is calculated from data
+        input. Each instance in time outputs a line with (position, velocity)
+        data. These are stored in a numpy array.
+        '''
+
         dt          = 1.0 / self.fps          # delta t
         didt        = 1.0 / self.data_in_fps  # delta t for datain
-        myTime      = 0.0  # Current time in simulation
+        simTime     = 0.0  # Current time in simulation
         dataInTime  = 0.0  # Current time in data extraction
-        hook   = self.hook
-        N = self.number_of_points
+        hook        = self.hook
+        N           = self.number_of_points
+        damping     = self.damping
 
+        print( "Hook: {}, dt: {}, didt:{}, damping:{}".format(hook, dt, didt, damping))
+
+        # A1: Current Data
+        # A2: Working Copy
+
+        A1 = self.points
+        A2 = zeros(shape = (self.number_of_points, 2), dtype = float)
         while True:
-            points = self.points
+            if DEBUG:
+                print("A1:\n{}".format(A1))
+                print("A2:\n{}".format(A2))
             freq, amp = next(self.dataIn)
-            print("freq = {}; amp = {}".format(int(freq), amp))
-            points[int(freq)][1] += amp * dt   # acceleration * delta t
-            print (dataInTime, myTime)
+
+            # We update our current data's velocity at the appropriate place
+
+            A1[int(freq)][1] += amp * didt   # velocity += acceleration * delta t
+
+            if DEBUG:
+                print('-'*40)
+                print("freq = {}; amp = {}".format(int(freq), amp))
+                print("dataInTime = {}, simTime = {}".format(dataInTime, simTime))
+                print("updated pos: {}".format(A1[int(freq)][1]))
 
             # Update velocity of points
-            A = zeros(shape = (self.number_of_points, 2), dtype = float)
             for i in range(N):  
-                # TODO: Note that this can be made more efficient with fewer
-                # references (2/iter instead of 3/iter...)
 
-                y_l = points[i-1][0] 
-                y   = points[i][0]
-                y_r = points[ (i+1) % N][0]
+                # Get y_left, y_right and y position values
+                y_l = A1[i-1][0] 
+                y   = A1[ i ][0]
+                y_r = A1[(i+1) % N][0]
 
-                # TODO: Make this more accurate? This is just looking at the y
-                # delta rather than doing the trig. More efficient BUT
-                # innaccurate...
                 F_l = hook * (y_l - y)  # Force Right
                 F_r = hook * (y_r - y)  # Force Left
                 F_v = -1 * hook * y     # Vertical Force
-                delta_v = (F_l + F_r + F_v) * didt
+                F = (F_l + F_r + F_v)
+
+                delta_v = F * didt
                 
-                # Update the velocity, storing in A
-                A[i][1] = (points[i][1] + delta_v)*self.damping
+                # Update the velocity, storing in A2
+                A2[i][1] = (A1[i][1] + delta_v)*damping
+                if DEBUG:
+                    print("A2[{}] = {}".format(i, A2[i]))
                 # Update position
-                A[i][0] += didt * points[i][1]
+                A2[i][0] = A1[i][0] + didt * A2[i][1]
+                if DEBUG:
+                    print("A2[{}] = {}".format(i, A2[i]))
+
+                if DEBUG:
+                    print("i = {}".format(i), A2[i])
+                    print("v = {}".format(A2[i][1]), "delta_v = {}".format(delta_v))
+                    print("y: {0:7.4f}, {1:7.4f}, {2:7.4f}\n".format(y_l, y, y_r),
+                          "F: {0:7.4f}, {1:7.4f}, {2:7.4f}".format(F_l, F_v, F_r))
+
             # Now update the points locations
             dataInTime += didt
-            if dataInTime > myTime:
-                myTime += dt
-                yield A
+            if dataInTime > simTime:
+                simTime += dt
+                # input("Yielding A2:\n{}".format( A2))
+                yield A2
 
             # Now, update self.points to point at our new array of points
-            self.points = A
-
-        
-
+            # A1 = A2
+            # A2 = zeros(shape = (self.number_of_points, 2), dtype = float)
+            A1, A2 = A2, A1
+            # input()
