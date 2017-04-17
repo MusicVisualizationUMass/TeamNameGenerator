@@ -37,6 +37,7 @@ class LinearOscillatorModel(ModelledRepr):
                  parameters       = None, 
                  number_of_points = 1024,
                  hook             = 1.0,
+                 data_shape       = (256,),
                  damping          = 0.9):
         '''
         sampleRate: number of samples per second to be _emmited_
@@ -46,6 +47,7 @@ class LinearOscillatorModel(ModelledRepr):
         parameters: dictionary of parameters to be passed in
         number_of_points: how many points on our line?
         hook: constant in Hooks Constant
+        data_shape: (number of points in data, data item size)
         damping: multiplicative factor to dampen velocities
         '''
 
@@ -58,9 +60,10 @@ class LinearOscillatorModel(ModelledRepr):
         self.number_of_points = number_of_points   # How many points in the line
         self.points = zeros(shape = shape, dtype = float)
         self.data_in_fps = dataInFPS  # Frames Per Second for input data
-        self.fps  = sampleRate        # frames per second for OUR data
-        self.hook = hook              # hooks constant
-        self.damping = damping        # 0 = max damping; 1.0 = no damping
+        self.fps        = sampleRate  # frames per second for OUR data
+        self.hook       = hook        # hooks constant
+        self.data_shape = data_shape
+        self.damping    = damping     # 0 = max damping; 1.0 = no damping
 
         # Set up data-in
         if dataIn == None:
@@ -69,15 +72,17 @@ class LinearOscillatorModel(ModelledRepr):
                 # Create a generator that sine stuff
                 C = self.number_of_points / 2
                 N = self.number_of_points / 2
-                print ("C = {}".format(C))
-                t = 0.0
-                while t < 30:
-                    t += 0.01
-                    print("t = {}".format(t))
-                    yield (N, 19 * cos(t))
-                    N = (N + 1) % self.number_of_points
-                while True:
-                    yield(0, 0)
+                n = 0
+                dshape = self.data_shape
+                while n < 1000:
+                    print("n = {}".format( n))
+                    A = zeros(shape = dshape, dtype=float)
+                    A[n % data_shape[0]] = 100.0
+                    n += 1
+                    yield(A)
+                A = zeros(shape = dshape, dtype = float)
+                while n < 2000:
+                    yield(A)
 
             self.dataIn = iter(f())
         else:
@@ -97,29 +102,27 @@ class LinearOscillatorModel(ModelledRepr):
         hook        = self.hook
         N           = self.number_of_points
         damping     = self.damping
-
+        dshape      = self.data_shape
         print( "Hook: {}, dt: {}, didt:{}, damping:{}".format(hook, dt, didt, damping))
 
         # A1: Current Data
         # A2: Working Copy
 
         A1 = self.points
-        A2 = zeros(shape = (self.number_of_points, 2), dtype = float)
+        A2 = zeros(shape = (N, 2), dtype = float)
         while True:
             if DEBUG:
                 print("A1:\n{}".format(A1))
                 print("A2:\n{}".format(A2))
-            freq, amp = next(self.dataIn)
+            data = next(self.dataIn)
 
-            # We update our current data's velocity at the appropriate place
+            # First, update A1
+            for i, val in enumerate(data):
+                freq = int((N / (dshape[0] + 1)) * i) % N
+                print ("i = {}, freq = {}, val = {}".format(i, freq, val))
+                # We update our current data's velocity at the appropriate place
+                A1[freq][1] += val * didt   # velocity += acceleration * delta t
 
-            A1[int(freq)][1] += amp * didt   # velocity += acceleration * delta t
-
-            if DEBUG:
-                print('-'*40)
-                print("freq = {}; amp = {}".format(int(freq), amp))
-                print("dataInTime = {}, simTime = {}".format(dataInTime, simTime))
-                print("updated pos: {}".format(A1[int(freq)][1]))
 
             # Update velocity of points
             for i in range(N):  
@@ -131,7 +134,7 @@ class LinearOscillatorModel(ModelledRepr):
 
                 F_l = hook * (y_l - y)  # Force Right
                 F_r = hook * (y_r - y)  # Force Left
-                F_v = -1 * hook * y     # Vertical Force
+                F_v = -0.15 * hook * y     # Vertical Force
                 F = (F_l + F_r + F_v)
 
                 delta_v = F * didt
