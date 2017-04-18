@@ -52,9 +52,9 @@ def plot_spectrogram(filename, samplerate = 0):
         ys = [ p[0] for p in frame]
         xs = range(len(frame))
         # Set frame info (+/- 1) to keep view realtively fixed...
-        #ys = ys + [1.0, -1.0]
+        ys = ys + [1.0, -1.0]
         # Set the extra points in ys to x = 0
-        #xs = list(xs) + [0, 0]
+        xs = list(xs) + [0, 0]
         plt.scatter(xs, ys)
         plt.show()        # Update visuals
         plt.pause(0.01)    # Pause
@@ -62,6 +62,6 @@ def plot_spectrogram(filename, samplerate = 0):
 
 if __name__ == '__main__':
     if len(argv) == 1:
-        plot_spectrogram('../../TempAudio/440Hz_With_660Hz-Pulse.wav', samplerate = 0)
+        plot_spectrogram('/home/ben/UMass/320/TempAudio/440Hz_With_660Hz-Pulse.wav', samplerate = 0)
     else:
         plot_spectrogram(argv[1], samplerate = 0)
