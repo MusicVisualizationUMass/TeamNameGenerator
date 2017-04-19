@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 import sys, os.path
 from aubio import pvoc, source, float_type
 from numpy import zeros, log10, vstack
