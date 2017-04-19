@@ -62,6 +62,6 @@ def plot_spectrogram(filename, samplerate = 0):
 
 if __name__ == '__main__':
     if len(argv) == 1:
-        plot_spectrogram('/home/ben/UMass/320/TempAudio/440Hz_With_660Hz-Pulse.wav', samplerate = 0)
+        plot_spectrogram('../media/440Hz_With_660Hz-Pulse.wav', samplerate = 0)
     else:
         plot_spectrogram(argv[1], samplerate = 0)
