@@ -29,20 +29,21 @@ def plot_spectrogram(filename, samplerate = 0):
     # Set up LinearOscillatorModel
     def dataIn():
         while True:
-            samples, read = a()                              # read file
+            samples, read = a()           # read file
             specgram = pv(samples).norm   # store new norm vector
             if read < a.hop_size: 
                 break
             yield(specgram)
+    dataInFPS = int(samplerate / hop_s)
         
     M = LinearOscillatorModel(
-            sampleRate       = 24,      # Visual sample rate
-            dataInFPS        = 24,      # Data sample rate (to generate visual)
-            number_of_points = points,  # how many points in simulation?
-            hook             = 101.0,
+            sampleRate       = 24,         # Visual sample rate
+            dataInFPS        = dataInFPS,  # Data sample rate (to generate visual)
+            number_of_points = points,     # how many points in simulation?
+            hook             = 121.0,
             dataIn           = dataIn,
             data_shape       = (256, ),
-            damping          = 0.9999)
+            damping          = 0.95)
 
     I = iter(M)
 
@@ -52,9 +53,9 @@ def plot_spectrogram(filename, samplerate = 0):
         ys = [ p[0] for p in frame]
         xs = range(len(frame))
         # Set frame info (+/- 1) to keep view realtively fixed...
-        ys = ys
+        ys = ys + [1.0, -1.0]
         # Set the extra points in ys to x = 0
-        xs = list(xs)
+        xs = list(xs) + [len(xs), len(xs)]
         plt.plot(xs, ys)
         plt.show()        # Update visuals
         plt.pause(0.01)    # Pause
