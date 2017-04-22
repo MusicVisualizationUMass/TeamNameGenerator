@@ -5,7 +5,7 @@ from pipeline.models.linear_oscillator import LinearOscillatorModel
 from sys import argv
 
 def plot_spectrogram(filename, samplerate = 0):
-    points = 512 
+    points = 257 
     win_s  = 512                                        # fft window size
     hop_s  = win_s // 2                                 # hop size
     fft_s  = win_s // 2 + 1                             # spectrum bins
@@ -29,8 +29,16 @@ def plot_spectrogram(filename, samplerate = 0):
     # Set up LinearOscillatorModel
     def dataIn():
         while True:
-            samples, read = a()           # read file
-            specgram = pv(samples).norm   # store new norm vector
+            samples, read = a()        # read file
+            specgram = pv(samples)     # grab complex vector
+            # while True:
+            #     s = input('>>> ')
+            #     if s.strip() == 'q':
+            #         break
+            #     try:
+            #         exec(s)
+            #     except Exception as e:
+            #         print(e)
             if read < a.hop_size: 
                 break
             yield(specgram)

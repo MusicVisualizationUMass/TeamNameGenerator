@@ -19,7 +19,7 @@ extensions easier.
 from pipeline.ir import ModelledRepr
 import numpy as np
 from numpy import ndarray, full, zeros
-from math import sin, cos
+from math import sin, cos, sqrt
 
 # Don't know what we'll need...
 from itertools import count, cycle, repeat
@@ -116,14 +116,18 @@ class LinearOscillatorModel(ModelledRepr):
             if DEBUG:
                 print("A1:\n{}".format(A1))
                 print("A2:\n{}".format(A2))
+            # This is an aubio.cvec and has data.norm and data.phas
+            # These will both return vectors of complex values
             data = next(self.dataIn)
+            data = zip(data.norm, data.phas)
 
             # First, update A1
             for i, val in enumerate(data):
+                norm, phase = val
                 freq = int(10 * (N / (dshape[0] + 1)) * i) % N
                 # print ("i = {}, freq = {}, val = {}".format(i, freq, val))
                 # We update our current data's velocity at the appropriate place
-                A1[freq][1] += val * didt   # velocity += acceleration * delta t
+                A1[freq][1] += 90 * cos(phase) * norm * didt   # velocity += acceleration * delta t
 
 
             # Update velocity of points
