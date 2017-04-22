@@ -52,10 +52,10 @@ def plot_spectrogram(filename, samplerate = 0):
         ys = [ p[0] for p in frame]
         xs = range(len(frame))
         # Set frame info (+/- 1) to keep view realtively fixed...
-        ys = ys + [1.0, -1.0]
+        ys = ys
         # Set the extra points in ys to x = 0
-        xs = list(xs) + [0, 0]
-        plt.scatter(xs, ys)
+        xs = list(xs)
+        plt.plot(xs, ys)
         plt.show()        # Update visuals
         plt.pause(0.01)    # Pause
         plt.cla()         # Clear 
