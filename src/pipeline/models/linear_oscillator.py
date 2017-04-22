@@ -67,7 +67,9 @@ class LinearOscillatorModel(ModelledRepr):
 
         # Set up data-in
         if dataIn == None:
-            
+            # XXX This needs to be updated to use the complex vector interface
+            # thus conforming to our spectrogram.py example int test dir
+            # CURRENTLY BROKEN
             def f():
                 # Create a generator that sine stuff
                 C = self.number_of_points / 2
@@ -134,7 +136,7 @@ class LinearOscillatorModel(ModelledRepr):
 
                 F_l = hook * (y_l - y)  # Force Right
                 F_r = hook * (y_r - y)  # Force Left
-                F_v = -0.15 * hook * y     # Vertical Force
+                F_v = -0.15 * hook * y  # Vertical Force
                 F = (F_l + F_r + F_v)
 
                 delta_v = F * didt
