@@ -4,7 +4,7 @@ We first make a progenitor sandpile. It will affect the shape of the output the 
 Then a NxN array, called AN, is created. For every cell in AN we create a subScale*N sub-sandpile for each cell in the 
 progenitor sandpile
 
-the sandpiles in AN are then stitched together in a numpy array as the output
+the sandpiles in AN are then stitched together in a numpy array as the outputs
 
 '''
 
@@ -25,8 +25,9 @@ class SubSandpileModel(ModelledRepr):
                 dataIn           = None,
                 dataInFPS        = 48,
                 parameters       = None,
-                subScale          = 0.5,      #0.0 < subScale < 1.0
+                subScale         = 0.5,      #0.0 < subScale < 1.0
                 size             = 15,
+                fill             = 10,
                 data_shape       = (256,)):
 
         super(ModelledRepr, self).__init__(sampleRate=sampleRate,
@@ -41,6 +42,7 @@ class SubSandpileModel(ModelledRepr):
         self.subSize = int(size*subScale)   #0.0 < subScale < 1.0
         self.shape = (size*self.subSize, size*self.subSize)
         self.points = np.zeros(shape=self.shape, dtype=int)
+        self.fill = fill
 
         # Set up data-in
         if dataIn == None:
@@ -76,33 +78,42 @@ class SubSandpileModel(ModelledRepr):
 
         dt = 1.0 / self.fps  # delta t
         didt = 1.0 / self.data_in_fps  # delta t for datain
+        size = self.size
+        subSize = self.subSize
         print("didt:{}, dt:{}".format(didt, dt))
 
-        
-        sizeList = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-        n=0
-        while True:
+        pNxN = Sandpile(size, size, fill=self.fill) #progenitor sandpile, FILL VALUE IMPORTANT
+
+        cache = dict()
+        for i in range(1,9):
+            cache[i] = Sandpile(subSize,subSize, fill=i+3) + Sandpile(subSize, subSize)
+
+        while True:             
             start = time.time()
-
             data = next(self.dataIn)
-
-            size = sizeList[n]
-            subSize = int(size * self.subScale)
-            n+=1
 
             output = np.zeros((size * subSize, size * subSize))
 
-            pNxN = Sandpile(size, size, fill=4)
-            pNxN = pNxN + Sandpile(size, size)
+            pNxN.check_over_flow_all()
+            
+            #g = max(max(list(pNxN))) - min(min(list(pNxN)))     #largest value in the sandpile minus the smallest
 
-            g = max(max(list(pNxN))) - min(min(list(pNxN)))     #largest value in the sandpile minus the smallest
-            AN = [[0]] * size     #instantiate NxN list
+
+            AN = [[0]] * size           #instantiate NxN list to hold sandpiles
             for i in range(size):
                 AN[i] = [0] * size
 
             for i, row in enumerate(pNxN):
                 for j, col in enumerate(row):
-                    AN[i][j] = (Sandpile(subSize, subSize, fill=pNxN.table[i][j] + g) + Sandpile(subSize, subSize))
+                    cell = pNxN.table[i][j] + 3
+
+                    #if cell_g value not in cache
+                    if cell in cache:
+                        AN[i][j] = cache[cell]
+                    #else make it and add to cache
+                    else:
+                        cache[cell] = Sandpile(subSize, subSize, fill=cell) + Sandpile(subSize, subSize)
+                        AN[i][j] = cache[cell]
 
             for i, row in enumerate(AN):
                 for j, col in enumerate(row):
@@ -113,11 +124,10 @@ class SubSandpileModel(ModelledRepr):
                     for x in range(0, subSize):
                         for y in range(0, subSize):
                             output[x + xOffset][y + yOffset] = sandpile[x][y]
-
-            end = time.time()
-            print("size: {}, time: {}".format(size, end-start))
-            if n==14: n=0
             yield(output)
+
+            #end = time.time()
+            #print("size: {}, time: {}".format(size, end-start))
 
 
 #fig = plt.imshow(output)

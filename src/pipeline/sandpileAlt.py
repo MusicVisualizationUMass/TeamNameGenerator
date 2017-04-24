@@ -58,8 +58,9 @@ class Sandpile:
     def __getitem__(self, x):
         return self.table[x]
 
-    def __iter__(self):
+    def __iter__(self): #0=normal iterator, 1=one call to check_over_flow
         return self.table.__iter__()
+
 
     def __eq__(self, other):
         return list(chain.from_iterable(self.table)) == list(chain.from_iterable(other))
@@ -70,6 +71,11 @@ class Sandpile:
     def __add__(self, other):
         return Sandpile.from_list([[self[x][y]+other[x][y] for y in range(self.cols)] for x in range(self.rows)])
 
+    def make_gen(self):
+        while True:
+            check_over_flow(self)
+            yield(self)
+
     def check_over_flow(self):
         for i, row in enumerate(self.table):
             for j, col in enumerate(row):
@@ -77,6 +83,12 @@ class Sandpile:
                     self.over_flow(i, j)
                     return True
         return False
+
+    def check_over_flow_all(self):
+        for i, row in enumerate(self.table):
+            for j, col in enumerate(row):
+                    if col > 3:
+                        self.over_flow(i,j)
 
     def over_flow(self, i, j):
         for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:

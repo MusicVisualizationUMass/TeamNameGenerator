@@ -45,7 +45,7 @@ def plot_spectrogram(filename, samplerate = 0):
             dataInFPS        = 24,      # Data sample rate (to generate visual)
             dataIn           = dataIn,
             data_shape       = (256, ),
-            size             =  10,
+            size             = 10,
             subScale         = 0.5)
 
     I = iter(M)
@@ -61,7 +61,7 @@ def plot_spectrogram(filename, samplerate = 0):
 
         #plt.savefig('foo.png')
 
-        plt.pause(0.1)    # Pause
+        plt.pause(0.01)    # Pause
         plt.cla()         # Clear 
 
 if __name__ == '__main__':
