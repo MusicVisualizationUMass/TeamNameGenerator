@@ -7,7 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.slider import Slider
 import sys; sys.path.append('pipeline/')
 from InputFields import InputFields
-from Pipeline import Pipeline
+from pipeline import Pipeline
 
 groovynessLevelLabel = None
 
