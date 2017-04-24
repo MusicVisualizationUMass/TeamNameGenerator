@@ -3,7 +3,7 @@ from numpy import zeros, log10, vstack
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pipeline.models.SandPlot import SubSandpileModel
+from models.SandPlot import SubSandpileModel
 from PIL import Image
 
 from sys import argv
@@ -61,7 +61,7 @@ def plot_spectrogram(filename, samplerate = 0):
 
         #plt.savefig('foo.png')
 
-        plt.pause(0.05)    # Pause
+        plt.pause(0.1)    # Pause
         plt.cla()         # Clear 
 
 if __name__ == '__main__':

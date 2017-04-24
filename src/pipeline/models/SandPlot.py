@@ -1,18 +1,17 @@
 '''
 the breakdown is as follows: 
-First a NxN array, called AN, is created, then for every cell in AN we create a subScale*N sub-sandpile. 
+We first make a progenitor sandpile. It will affect the shape of the output the most.
+Then a NxN array, called AN, is created. For every cell in AN we create a subScale*N sub-sandpile for each cell in the 
+progenitor sandpile
 
+the sandpiles in AN are then stitched together in a numpy array as the output
 
-When making A10, it will have an initial value equal to its progenitor cell in all cells of A10. The value g is then added to every cell of A10
-g = (highest value in A20) - (lowest value in A20)
-
-A 20x20 numpy array will hold every instance of A10 in its corresponding cell. The output will then be a visualization of every A10 sandpile stitched together.
 '''
 
-from pipeline.ir import ModelledRepr
+from ir import ModelledRepr
 import numpy as np
 import matplotlib.pyplot as plt
-from pipeline.sandpileAlt import Sandpile
+from sandpileAlt import Sandpile
 import warnings
 import time
 
@@ -71,48 +70,54 @@ class SubSandpileModel(ModelledRepr):
 
     def __iter__(self):
         '''Create an iterator that outputs data that is calculated from data
-        input. Each instance in time outputs a line with (position, velocity)
-        data. These are stored in a numpy array.
+        input. Each instance in time outputs a sandpile. These are stored in a numpy array.
         '''
         warnings.filterwarnings("ignore", ".*GUI is implemented.*")
 
         dt = 1.0 / self.fps  # delta t
         didt = 1.0 / self.data_in_fps  # delta t for datain
-        size = self.size
-        subSize = self.subSize
-        print("size: {}, subSize: {}, didt:{}, dt:{}".format(size, subSize, didt, dt))
+        print("didt:{}, dt:{}".format(didt, dt))
 
+        
+        sizeList = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        n=0
         while True:
+            start = time.time()
+
             data = next(self.dataIn)
 
-            size = int(np.random.randint(8,20))
+            size = sizeList[n]
             subSize = int(size * self.subScale)
-            print("size: {}, mean: {}".format(size, np.mean(data)))
+            n+=1
 
             output = np.zeros((size * subSize, size * subSize))
 
-            p20x20 = Sandpile(size, size, fill=4)
-            p20x20 = p20x20 + Sandpile(size, size)
+            pNxN = Sandpile(size, size, fill=4)
+            pNxN = pNxN + Sandpile(size, size)
 
-            g = max(max(list(p20x20))) - min(min(list(p20x20)))     #largest value in the sandpile minus the smallest
+            g = max(max(list(pNxN))) - min(min(list(pNxN)))     #largest value in the sandpile minus the smallest
             AN = [[0]] * size     #instantiate NxN list
             for i in range(size):
                 AN[i] = [0] * size
 
-            for i, row in enumerate(p20x20):
+            for i, row in enumerate(pNxN):
                 for j, col in enumerate(row):
-                    AN[i][j] = (Sandpile(subSize, subSize, fill=p20x20.table[i][j] + g) + Sandpile(subSize, subSize))
+                    AN[i][j] = (Sandpile(subSize, subSize, fill=pNxN.table[i][j] + g) + Sandpile(subSize, subSize))
 
             for i, row in enumerate(AN):
                 for j, col in enumerate(row):
-                    xOffset = j * subSize - 1
-                    yOffset = i * subSize - 1
+                    xOffset = j * subSize 
+                    yOffset = i * subSize 
                     sandpile = list(AN[i][j])
 
                     for x in range(0, subSize):
                         for y in range(0, subSize):
                             output[x + xOffset][y + yOffset] = sandpile[x][y]
-            yield (output)
+
+            end = time.time()
+            print("size: {}, time: {}".format(size, end-start))
+            if n==14: n=0
+            yield(output)
 
 
 #fig = plt.imshow(output)
