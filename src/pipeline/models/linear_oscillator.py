@@ -42,7 +42,8 @@ class LinearOscillatorModel(ModelledRepr):
         '''
         sampleRate: number of samples per second to be _emmited_
         sampleRange: (min,max) of possible values
-        dataIn: generator/iterator/array for input data of the form (p_1, p_2).
+        dataIn: generator/iterator/array for input data. Expected to be 
+                a list of aubio.cvecs.
         dataInFPS: number of samples per second that that dataIn is emitting
         parameters: dictionary of parameters to be passed in
         number_of_points: how many points on our line?
@@ -170,5 +171,32 @@ class LinearOscillatorModel(ModelledRepr):
             # Now, update self.points to point at our new array of points
             # A1 = A2
             # A2 = zeros(shape = (self.number_of_points, 2), dtype = float)
-            A1, A2 = A2, A1
+            A1, A2 = A2, zeros(shape = (N, 2), dtype = float)
             # input()
+
+    def get_frames(self, width = 512, height = 512):
+        '''Return a list of numpy frames'''
+        pt_list  = [points for points in iter(self)]
+        pt_width = len(pt_list[0])      # width of each points instance
+
+        if pt_width > len(pt_list[0]):
+            raise Exception('width of video must be greater than width of points')
+
+        result   = []
+
+        for points in pt_list:
+            arr = zeros(shape = (height, width, 3), dtype=np.uint8)
+            for i, (point, vel) in enumerate(points):
+                x = int(i * width / pt_width)
+                y = int( (height / 2) + 10.0 * point * (height / 2))
+                print("y =", y)
+                if y >= height:
+                    y = height - 1
+                if y < 0:
+                    y = 0
+                print("y =", y)
+                arr[y][x][0] = 255
+                arr[y][x][1] = int(150 + 10 * vel) % 255
+                arr[y][x][2] = int(150 + 10 * vel) % 255
+            result.append(arr)
+        return result
