@@ -19,7 +19,7 @@ extensions easier.
 from pipeline.ir import ModelledRepr
 import numpy as np
 from numpy import ndarray, full, zeros
-from math import sin, cos, sqrt
+from math import sin, cos, sqrt, atan, pi
 
 # Don't know what we'll need...
 from itertools import count, cycle, repeat
@@ -174,7 +174,7 @@ class LinearOscillatorModel(ModelledRepr):
             A1, A2 = A2, zeros(shape = (N, 2), dtype = float)
             # input()
 
-    def get_frames(self, width = 512, height = 512):
+    def get_frames(self, width = 720, height = 512):
         '''Return a list of numpy frames'''
         pt_list  = [points for points in iter(self)]
         pt_width = len(pt_list[0])      # width of each points instance
@@ -187,16 +187,46 @@ class LinearOscillatorModel(ModelledRepr):
         for points in pt_list:
             arr = zeros(shape = (height, width, 3), dtype=np.uint8)
             for i, (point, vel) in enumerate(points):
-                x = int(i * width / pt_width)
-                y = int( (height / 2) + 10.0 * point * (height / 2))
-                print("y =", y)
-                if y >= height:
-                    y = height - 1
-                if y < 0:
-                    y = 0
-                print("y =", y)
-                arr[y][x][0] = 255
-                arr[y][x][1] = int(150 + 10 * vel) % 255
-                arr[y][x][2] = int(150 + 10 * vel) % 255
+                # Weird offsets are to allow a 2x2 pixel (+/- 1...)
+                x = int(i * (width-2) / pt_width + 2)
+                # HEY! So the following y value works like this:
+                #  -pi/2 <= arctan(x) <= pi/2, so dividing out by pi we get
+                # -1/2 <= arctan(x) / pi <= 1/2, and the result below is that
+                # we get a value between 0 and height
+                y = int( (height / 2) + atan(5.0 * point) * (height)/ (pi))
+                if y >= height - 1:
+                    y = height - 2
+                if y < 1:
+                    y = 1
+                arr[y][x][0]     = 255
+                arr[y-1][x][0]   = 255
+                arr[y-2][x][0]   = 255
+                arr[y][x-1][0]   = 255
+                arr[y-1][x-1][0] = 255
+                arr[y-2][x-1][0] = 255
+                arr[y][x-2][0]   = 255
+                arr[y-1][x-2][0] = 255
+                arr[y-2][x-2][0] = 255
+
+                arr[y][x][1]     = 255
+                arr[y-1][x][1]   = 255
+                arr[y-2][x][1]   = 255
+                arr[y][x-1][1]   = 255
+                arr[y-1][x-1][1] = 255
+                arr[y-2][x-1][1] = 255
+                arr[y][x-2][1]   = 255
+                arr[y-1][x-2][1] = 255
+                arr[y-2][x-2][1] = 255
+
+                arr[y][x][2]     = 255
+                arr[y-1][x][2]   = 255
+                arr[y-2][x][2]   = 255
+                arr[y][x-1][2]   = 255
+                arr[y-1][x-1][2] = 255
+                arr[y-2][x-1][2] = 255
+                arr[y][x-2][2]   = 255
+                arr[y-1][x-2][2] = 255
+                arr[y-2][x-2][2] = 255
+
             result.append(arr)
         return result

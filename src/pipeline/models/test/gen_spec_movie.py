@@ -18,15 +18,6 @@ def plot_spectrogram(filename, samplerate = 0):
     pv = pvoc(win_s, hop_s)                            # phase vocoder
     specgram = zeros([0, fft_s], dtype=float_type)     # numpy array to store spectrogram
 
-    while False:   # Set to true for interpreter
-        s = input('>>> ').strip()
-        if s.lower() in ('x', 'q', 'quit', 'exit', 'break'):
-            break
-        try:
-            exec(s)
-        except Exception as e:
-            print(e)
-
     # Set up LinearOscillatorModel
     def dataIn():
         while True:
@@ -35,6 +26,7 @@ def plot_spectrogram(filename, samplerate = 0):
             if read < a.hop_size: 
                 break
             yield(specgram)
+
     dataInFPS = int(samplerate / hop_s)
         
     M = LinearOscillatorModel(
@@ -48,7 +40,11 @@ def plot_spectrogram(filename, samplerate = 0):
 
     frames = M.get_frames()
     clip = ImageSequenceClip(frames, fps = 24)
-    clip.write_videofile("output.mp4", fps = 24)
+    try:
+        clip.write_videofile("output.mp4", fps = 24, audio=filename)
+    except:
+        print("[!] ERROR: Couldn't Write Audio!")
+        clip.write_videofile("output.mp4", fps = 24)
 
 if __name__ == '__main__':
     if len(argv) == 1:
