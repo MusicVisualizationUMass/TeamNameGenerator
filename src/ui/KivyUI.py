@@ -11,7 +11,6 @@ from kivy.uix.floatlayout import FloatLayout
 
 import kivy
 import os
-import fileExp
 
 Builder.load_string("""
 <MyWidget>:
