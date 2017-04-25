@@ -126,17 +126,3 @@ class SubSandpileModel(ModelledRepr):
                             output[x + xOffset][y + yOffset] = sandpile[x][y]
             yield(output)
 
-            #end = time.time()
-            #print("size: {}, time: {}".format(size, end-start))
-
-
-#fig = plt.imshow(output)
-#plt.axis('off')
-#fig.axes.get_xaxis().set_visible(False)
-#fig.axes.get_yaxis().set_visible(False)
-#plt.show()
-
-#plt.matshow(output,)
-#start = time.time()
-#end = time.time()
-#print("time: {}".format(end - start))
