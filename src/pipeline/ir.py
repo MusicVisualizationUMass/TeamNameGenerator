@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+from aubio import pvoc, float_type
+import aubio
+
+from numpy import zeros, log10, vstack
 '''
 ir.py: Defines the intermediate representation API and the main components of
 the pipeline. These can be extended as seen fit.
@@ -77,29 +81,37 @@ class AudioRepr(IntermediateRepr):
     AudioRepr represents an audio stream/array.
     TODO: Document
     '''
-    def __init__(self, sampleRate = 44100, sampleRange = (None, None),
+    def __init__(self, audioFile, input_fields, sampleRate = 0, sampleRange = (None, None),
                  dataIn = None, parameters = None, sampleType = int, 
-                 bitDepth = 16, audioFile = None):
-        '''
-        TODO: how to pull in audio data?
-        '''
+                 bitDepth = 16):
 
-        super(AudioRepr, self).__init__(sampleRate  = sampleRate,
-                                        sampleRange = (0, 2**bitDepth),
-                                        dataIn      = dataIn,
-                                        parameters  = parameters)
-        self._bitDepth   = bitDepth
-        self._sampleType = sampleType
+        self.input_fields = input_fields
+        verbose = 'verbose' in input_fields and input_fields['verbose']
+
+        if verbose:
+            print('[DEBUG] Creating AudioRepr instance')
         self._audioFile  = audioFile
+        self.win_s  = 512           # fft window size
+        self.hop_s  = self.win_s // 2    # hop size
+        
+        if verbose:
+            print('        audiofile = {}, win_s = {}, hop_s = {}'.format(
+                  audioFile, self.win_s, self.hop_s))
+        self.source = aubio.source(audioFile, sampleRate, self.hop_s)
+        self.sampleRate = self.source.samplerate
+        if verbose:
+            print('        source = {}'.format(self.source))
+            print('        sampelrate = {}'.format(self.sampleRate))
+
 
     def __iter__(self):
-        return iter(self._data)
+        raise NotImplementedError('I\'m not implemented! Oh No!')
 
     def __getitem__(self, key):
         '''
         TODO: Error check? Extend?
         '''
-        return self._data[key]
+        raise NotImplementedError('I\'m not implemented! Oh No!')
 
 class ParametricRepr(IntermediateRepr):
     '''
@@ -124,6 +136,62 @@ class ParametricRepr(IntermediateRepr):
     def __getitem(self, key):
         return self._data[key]
 
+class PhaseVocPR(ParametricRepr):
+    def __init__(self, audiorepr, input_fields, windowsize = 512, sampleRate = 0, 
+                 sampleRange = (0, 255), dataIn = None, parameters = None, 
+                 dims = 2, sampleType = int):
+        '''
+        For now ignoring a large part of the ParametricRepr API as much of
+        this is taken care of automatically (via aubio.source). All we need is
+        an aubiosource input and an input_fields that contains data/parameters
+        from the user/defaults from the system
+        '''
+
+        self.input_fields = input_fields
+        self.verbose = 'verbose' in input_fields and input_fields['verbose']
+        
+        if self.verbose:
+            print('[DEBUG] Creating PhaseVocPR')
+        self.air    = audiorepr
+        self.source = self.air.source
+        self.input_fields = input_fields
+        self.win_s  = self.air.win_s
+        self.hop_s  = self.air.hop_s
+        self.fft_s  = self.win_s // 2 + 1
+        self.sampleRate = self.air.sampleRate
+        self.dataInFPS  = int(self.sampleRate / self.hop_s)
+
+
+    def getDataIn(self):
+        ''' 
+        Return a new dataIn function that creates a generator for cvec data
+        Pretty much the same as __iter__(). Probably can take this out...
+        '''
+        def dataIn():
+            pv = pvoc(self.win_s, self.hop_s)
+            while True:
+                samples, read = self.source() # Read the file
+                cvec          = pv(samples)
+                if read < self.source.hop_size:
+                    break                     # Out of samples
+                yield (cvec)
+
+        return dataIn
+
+    def __iter__(self):
+        if self.verbose:
+            print('[DEBUG] PhaseVocPR.__iter__()')
+        pv = pvoc(self.win_s, self.hop_s)
+        if self.verbose:
+            print('        Created Phase Vocoder (pv = pvoc(self.win_s, self.hop_s)')
+
+        while True:
+            samples, read = self.source() # Read the file
+            cvec = pv(samples)
+            if read < self.source.hop_size:
+                break                     # Out of samples
+            yield (cvec)
+
 class ModelledRepr(IntermediateRepr, VisualizableMixin):
     def __init__(self, sampleRate = 24, sampleRange = (None, None),
                  dataIn = None, parameters = None):
@@ -132,6 +200,5 @@ class ModelledRepr(IntermediateRepr, VisualizableMixin):
                                            dataIn      = dataIn,
                                            parameters  = parameters)
     def visualize(self):
-        # TODO
         raise NotImplementedError('todo')
 

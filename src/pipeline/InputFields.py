@@ -1,5 +1,3 @@
-class InputFields(object)
-    def __init__():
+class InputFields(object):
+    def __init__(self):
         pass
-
-    
