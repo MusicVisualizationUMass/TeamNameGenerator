@@ -1,10 +1,12 @@
 from aubio import pvoc, source, float_type
 from numpy import zeros, log10, vstack
 import numpy as np
+
 import matplotlib
 import matplotlib.pyplot as plt
 from models.SandPlot import SubSandpileModel
 from PIL import Image
+from moviepy.editor import * 
 
 from sys import argv
 
@@ -52,15 +54,13 @@ def plot_spectrogram(filename, samplerate = 0):
 
     plt.ion()            # Interactive I/O
 
-    for frame in I:
-        fig = plt.imshow(frame, interpolation='bicubic', aspect='auto')
+    imgList = []
+
+    for frame in I:        
+        plt.imshow(frame, interpolation='bicubic', aspect='auto')
         plt.axis('off')
-        fig.axes.get_xaxis().set_visible(False)
-        fig.axes.get_yaxis().set_visible(False)
+
         plt.show()
-
-        #plt.savefig('foo.png')
-
         plt.pause(0.01)    # Pause
         plt.cla()         # Clear 
 
