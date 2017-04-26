@@ -5,3 +5,5 @@ verify_ssl = true
 [packages]
 aubio = "*"
 pydub = "*"
+pygame = "*"
+moviepy = "*"
