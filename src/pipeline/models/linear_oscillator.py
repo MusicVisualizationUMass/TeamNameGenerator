@@ -24,21 +24,20 @@ from math import sin, cos, sqrt, atan, pi
 # Don't know what we'll need...
 from itertools import count, cycle, repeat
 
-DEBUG = False
-
 class LinearOscillatorModel(ModelledRepr):
     # TODO: include params for ModelledRepr
 
     def __init__(self, 
+                 pir,                      # A Parametric Representation
                  sampleRate       = 24, 
                  sampleRange      = (None, None),
                  dataIn           = None, 
                  dataInFPS        = 48,
                  parameters       = None, 
-                 number_of_points = 1024,
-                 hook             = 1.0,
+                 number_of_points = 512,
+                 hook             = 121.0,
                  data_shape       = (256,),
-                 damping          = 0.9):
+                 damping          = 0.95):
         '''
         sampleRate: number of samples per second to be _emmited_
         sampleRange: (min,max) of possible values
@@ -52,10 +51,6 @@ class LinearOscillatorModel(ModelledRepr):
         damping: multiplicative factor to dampen velocities
         '''
 
-        super(ModelledRepr, self).__init__(sampleRate  = sampleRate,
-                                           sampleRange = sampleRange,
-                                           dataIn      = dataIn,
-                                           parameters  = parameters)
 
         shape = (number_of_points, 2)              # Shape of points
         self.number_of_points = number_of_points   # How many points in the line
@@ -65,32 +60,11 @@ class LinearOscillatorModel(ModelledRepr):
         self.hook       = hook        # hooks constant
         self.data_shape = data_shape
         self.damping    = damping     # 0 = max damping; 1.0 = no damping
+        self.dataIn     = iter(pir)
+        self.pir        = pir
+
 
         # Set up data-in
-        if dataIn == None:
-            # XXX This needs to be updated to use the complex vector interface
-            # thus conforming to our spectrogram.py example int test dir
-            # CURRENTLY BROKEN
-            def f():
-                # Create a generator that sine stuff
-                C = self.number_of_points / 2
-                N = self.number_of_points / 2
-                n = 0
-                dshape = self.data_shape
-                while n < 1000:
-                    print("n = {}".format( n))
-                    A = zeros(shape = dshape, dtype=float)
-                    A[n % data_shape[0]] = 100.0
-                    n += 1
-                    yield(A)
-                A = zeros(shape = dshape, dtype = float)
-                while n < 2000:
-                    yield(A)
-
-            self.dataIn = iter(f())
-        else:
-            # XXX: This might break! See how data will be passed in...
-            self.dataIn = iter(dataIn())
 
     def __iter__(self):
         '''Create an iterator that outputs data that is calculated from data
@@ -114,17 +88,13 @@ class LinearOscillatorModel(ModelledRepr):
         A1 = self.points
         A2 = zeros(shape = (N, 2), dtype = float)
         while True:
-            if DEBUG:
-                print("A1:\n{}".format(A1))
-                print("A2:\n{}".format(A2))
             # This is an aubio.cvec and has data.norm and data.phas
             # These will both return vectors of complex values
             data = next(self.dataIn)
             data = zip(data.norm, data.phas)
 
             # First, update A1
-            for i, val in enumerate(data):
-                norm, phase = val
+            for i, (norm, phase)in enumerate(data):
                 freq = int(10 * (N / (dshape[0] + 1)) * i) % N
                 # print ("i = {}, freq = {}, val = {}".format(i, freq, val))
                 # We update our current data's velocity at the appropriate place
@@ -148,18 +118,8 @@ class LinearOscillatorModel(ModelledRepr):
                 
                 # Update the velocity, storing in A2
                 A2[i][1] = (A1[i][1] + delta_v)*damping
-                if DEBUG:
-                    print("A2[{}] = {}".format(i, A2[i]))
                 # Update position
                 A2[i][0] = A1[i][0] + didt * A2[i][1]
-                if DEBUG:
-                    print("A2[{}] = {}".format(i, A2[i]))
-
-                if DEBUG:
-                    print("i = {}".format(i), A2[i])
-                    print("v = {}".format(A2[i][1]), "delta_v = {}".format(delta_v))
-                    print("y: {0:7.4f}, {1:7.4f}, {2:7.4f}\n".format(y_l, y, y_r),
-                          "F: {0:7.4f}, {1:7.4f}, {2:7.4f}".format(F_l, F_v, F_r))
 
             # Now update the points locations
             dataInTime += didt
@@ -176,7 +136,7 @@ class LinearOscillatorModel(ModelledRepr):
 
     def get_frames(self, width = 720, height = 512):
         '''Return a list of numpy frames'''
-        pt_list  = [points for points in iter(self)]
+        pt_list  = list(iter(self))
         pt_width = len(pt_list[0])      # width of each points instance
 
         if pt_width > len(pt_list[0]):
