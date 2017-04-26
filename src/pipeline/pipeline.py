@@ -60,10 +60,11 @@ class Pipeline(object):
 
 
 
-    def makeMovie(self, visualizer, output = None):
+    def makeMovie(self, visualizer):
         output = self.output
         frames = visualizer.visualize()
         clip   = ImageSequenceClip(frames, fps = 24)
+
         if self.verbose:
             print('Pipeline.makeMovie()')
             print('    output = {}'.format(output))
@@ -76,7 +77,6 @@ class Pipeline(object):
             except:
                 print("[!] ERROR: Couldn't include audio into", output)
                 clip.write_videofile(output, fps = 24)
-                
 
     def buildLinearOscillatorVisualizer(self):
         from pipeline.ir import PhaseVocPR, AudioRepr
