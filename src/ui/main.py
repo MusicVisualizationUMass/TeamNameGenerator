@@ -5,7 +5,9 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.slider import Slider
-
+import sys; sys.path.append('pipeline/')
+from InputFields import InputFields
+from pipeline import Pipeline
 
 groovynessLevelLabel = None
 
@@ -15,6 +17,14 @@ def OnGroovynessSliderValueChange(instance,value):
 
 def callback(instance):
     print('The Visualize Button is being pressed')
+
+    # build InputFields
+    IF = InputFields()
+    IF.groovyness = float(groovynessLevelLabel.text)
+
+    # start the pipeline process
+    p = Pipeline(IF)
+    p.buildVisualization()
 
 class MusAppGui(GridLayout):
 

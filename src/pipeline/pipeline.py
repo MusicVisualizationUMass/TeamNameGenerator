@@ -79,4 +79,3 @@ class Pipeline(object):
         print("Creating VIR")
         lovis = LinearOscillatorVisualizer(linos)
         return lovis
-
