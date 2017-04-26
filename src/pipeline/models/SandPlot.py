@@ -8,32 +8,34 @@ the sandpiles in AN are then stitched together in a numpy array as the outputs
 
 '''
 
-from ir import ModelledRepr
+from pipeline.ir import ModelledRepr
 import numpy as np
 import matplotlib.pyplot as plt
-from sandpileAlt import Sandpile
+from pipeline.sandpileAlt import Sandpile
 import warnings
-import time
 
 
 class SubSandpileModel(ModelledRepr):
     # TODO: include params for ModelledRepr
 
     def __init__(self,
+                pir,                      # A Parametric Representation
+                input_fields,             # Parameters
                 sampleRate       = 24,
                 sampleRange      = (None, None),
-                dataIn           = None,
                 dataInFPS        = 48,
                 parameters       = None,
                 subScale         = 0.5,      #0.0 < subScale < 1.0
                 size             = 15,
-                fill             = 10,
+                fill             = 5,
                 data_shape       = (256,)):
 
         super(ModelledRepr, self).__init__(sampleRate=sampleRate,
                                            sampleRange=sampleRange,
                                            dataIn=dataIn,
                                            parameters=parameters)
+
+        self.verbose = 'verbose' in input_fields and input_fields['verbose']
         self.data_in_fps = dataInFPS  # Frames Per Second for input data
         self.fps = sampleRate  # frames per second for OUR data
         self.data_shape = data_shape
@@ -43,31 +45,7 @@ class SubSandpileModel(ModelledRepr):
         self.shape = (size*self.subSize, size*self.subSize)
         self.points = np.zeros(shape=self.shape, dtype=int)
         self.fill = fill
-
-        # Set up data-in
-        if dataIn == None:
-
-            def f():
-
-                # Create a generator that sine stuff
-                C = self.number_of_points / 2
-                N = self.number_of_points / 2
-                n = 0
-                dshape = self.data_shape
-                while n < 1000:
-                    print("n = {}".format(n))
-                    A = np.zeros(shape=dshape, dtype=float)
-                    A[n % data_shape[0]] = 100.0
-                    n += 1
-                    yield (A)
-                A = np.zeros(shape=dshape, dtype=float)
-                while n < 2000:
-                    yield (A)
-
-            self.dataIn = iter(f())
-        else:
-            # XXX: This might break! See how data will be passed in...
-            self.dataIn = iter(dataIn())
+        self.dataIn     = iter(pir)
 
 
     def __iter__(self):
@@ -96,8 +74,6 @@ class SubSandpileModel(ModelledRepr):
 
             pNxN.check_over_flow_all()
             
-            #g = max(max(list(pNxN))) - min(min(list(pNxN)))     #largest value in the sandpile minus the smallest
-
 
             AN = [[0]] * size           #instantiate NxN list to hold sandpiles
             for i in range(size):

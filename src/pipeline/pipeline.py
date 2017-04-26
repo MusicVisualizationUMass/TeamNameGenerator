@@ -50,6 +50,8 @@ class Pipeline(object):
         # later if we want multiple types of visualizations
         if self.visualization == 'linear-oscillator':
             visualizer = self.buildLinearOscillatorVisualizer()
+        elif self.visualization == 'sandpile':
+            visualizer = self.buildSandpileVisualizer()
         else:
             if self.verbose:
                 print('Warning: no visualization {}'.format(self.visualization))
@@ -107,3 +109,34 @@ class Pipeline(object):
             print("Creating VIR")
         lovis = LinearOscillatorVisualizer(linos, mode = 'dots')
         return lovis
+
+
+    def buildSandpileVisualizer(self):
+        from pipeline.ir import PhaseVocPR, AudioRepr
+        from pipeline.models.SandPlot import SubSandpileModel
+        from pipeline.models.sandpile_visualizer import SubSandpileVisualizer
+        
+        if self.verbose:
+            print("Creating AIR")
+        audio = AudioRepr(self.source_wav, self.input_fields)
+
+        if self.verbose:
+            print("Creating PIR")
+        phvoc = PhaseVocPR(audio, self.input_fields)
+        if self.verbose:
+            print("Creating MIR")
+        dataInFPS = phvoc.dataInFPS # XXX: This should be automatic
+
+        sandModel = SubSandpileModel(
+            sampleRate       = 24,      # Visual sample rate
+            dataInFPS        = 24,      # Data sample rate (to generate visual)
+            dataIn           = dataIn,
+            data_shape       = (256, ),
+            size             = 10,
+            subScale         = 0.5)
+
+        if self.verbose:
+            print("Creating VIR")
+
+        sandVisualizer = SubSandpileVisualizer(sandModel)
+        return sandVisualizer

@@ -5,8 +5,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from models.SandPlot import SubSandpileModel
-from PIL import Image
-from moviepy.editor import * 
 
 from sys import argv
 

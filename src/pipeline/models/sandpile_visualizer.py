@@ -1,11 +1,12 @@
 from ir import ModelledRepr
 import numpy as np
 import matplotlib.pyplot as plt
-from moviepy.editor import *
+#from moviepy.editor import *
+from PIL import Image
 
-class SandpileVisualization(ModelledRepr):
-	def __init__(self, model=None):
-		self.model = model
+class SubSandpileVisualizer(VisualizableMixin):
+	def __init__(self, sandpile_model):
+		self.model = sandpile_model
 
 	def make_frame(self, frame):
 		size = self.model.size
@@ -23,11 +24,14 @@ class SandpileVisualization(ModelledRepr):
 	def visualize(self):
 		result = []
 
-		I = iter(M)
+		#I = list(iter(self.model))
+		I = iter(self.model)
 		for frame in I
 			result.append(make_frame(frame))
 
-		isc = ImageSequenceClip(result, fps = 24)
-		isc.write_videofile('movie.mp4', fps=24)
+		#isc = ImageSequenceClip(result, fps = 24)
+		#isc.write_videofile('movie.mp4', fps=24)
+
+		return result
 
 
