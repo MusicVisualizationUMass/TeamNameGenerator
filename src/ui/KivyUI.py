@@ -12,6 +12,10 @@ from kivy.uix.floatlayout import FloatLayout
 import kivy
 import os
 
+import sys; sys.path.append('pipeline/')
+from InputFields import InputFields
+from pipeline import Pipeline
+
 Builder.load_string("""
 <MyWidget>:
     id: my_gui
@@ -33,6 +37,7 @@ Builder.load_string("""
                 min: 0
                 max: 10
                 value: 0
+                on_value: my_gui.setGroovyness(groovyness.value)
             Label:
                 text: str(groovyness.value)
         FileChooserListView:
@@ -47,16 +52,31 @@ Builder.load_string("""
 """)
 
 class MyWidget(FloatLayout):
-	def selected(self, filename):
-		print('selected: %s' % filename[0])
-		file = open(filename[0], "rb")
 
-	def callback(instance):
-		print('The Visualize Button is being pressed')
+    groove = 0
+    file = None
+    def setGroovyness(self, groovyness):
+        groove = groovyness
+
+    def selected(self, filename):
+        print('selected: %s' % filename[0])
+        file = open(filename[0], "rb")
+
+    def callback(instance):
+        print('The Visualize Button is being pressed')
+
+        # build InputFields
+        IF = InputFields()
+        IF.groovyness = float(groove)
+        IF.source = file
+
+        # start the pipeline process
+        p = Pipeline(IF)
+        p.buildVisualization()
 
 class MyApp(App):
-	def build(self):
-		return MyWidget()
+    def build(self):
+        return MyWidget()
 
 if __name__ == '__main__':
-	MyApp().run()
+    MyApp().run()
