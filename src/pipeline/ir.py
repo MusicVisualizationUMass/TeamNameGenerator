@@ -81,24 +81,27 @@ class AudioRepr(IntermediateRepr):
     AudioRepr represents an audio stream/array.
     TODO: Document
     '''
-    def __init__(self, audioFile, sampleRate = 0, sampleRange = (None, None),
+    def __init__(self, audioFile, input_fields, sampleRate = 0, sampleRange = (None, None),
                  dataIn = None, parameters = None, sampleType = int, 
                  bitDepth = 16):
-        '''
-        TODO: how to pull in audio data?
-        '''
 
-        print('[DEBUG] Creating AudioRepr instance')
+        self.input_fields = input_fields
+        verbose = 'verbose' in input_fields and input_fields['verbose']
+
+        if verbose:
+            print('[DEBUG] Creating AudioRepr instance')
         self._audioFile  = audioFile
         self.win_s  = 512           # fft window size
         self.hop_s  = self.win_s // 2    # hop size
         
-        print('        audiofile = {}, win_s = {}, hop_s = {}'.format(
-              audioFile, self.win_s, self.hop_s))
+        if verbose:
+            print('        audiofile = {}, win_s = {}, hop_s = {}'.format(
+                  audioFile, self.win_s, self.hop_s))
         self.source = aubio.source(audioFile, sampleRate, self.hop_s)
         self.sampleRate = self.source.samplerate
-        print('        source = {}'.format(self.source))
-        print('        sampelrate = {}'.format(self.sampleRate))
+        if verbose:
+            print('        source = {}'.format(self.source))
+            print('        sampelrate = {}'.format(self.sampleRate))
 
 
     def __iter__(self):
@@ -134,19 +137,24 @@ class ParametricRepr(IntermediateRepr):
         return self._data[key]
 
 class PhaseVocPR(ParametricRepr):
-    def __init__(self, audiorepr, inputfields, windowsize = 512, sampleRate = 0, 
+    def __init__(self, audiorepr, input_fields, windowsize = 512, sampleRate = 0, 
                  sampleRange = (0, 255), dataIn = None, parameters = None, 
                  dims = 2, sampleType = int):
         '''
         For now ignoring a large part of the ParametricRepr API as much of
         this is taken care of automatically (via aubio.source). All we need is
-        an aubiosource input and an inputfields that contains data/parameters
+        an aubiosource input and an input_fields that contains data/parameters
         from the user/defaults from the system
         '''
-        print('[DEBUG] Creating PhaseVocPR')
+
+        self.input_fields = input_fields
+        self.verbose = 'verbose' in input_fields and input_fields['verbose']
+        
+        if self.verbose:
+            print('[DEBUG] Creating PhaseVocPR')
         self.air    = audiorepr
         self.source = self.air.source
-        self.fields = inputfields
+        self.input_fields = input_fields
         self.win_s  = self.air.win_s
         self.hop_s  = self.air.hop_s
         self.fft_s  = self.win_s // 2 + 1
@@ -171,9 +179,11 @@ class PhaseVocPR(ParametricRepr):
         return dataIn
 
     def __iter__(self):
-        print('[DEBUG] PhaseVocPR.__iter__()')
+        if self.verbose:
+            print('[DEBUG] PhaseVocPR.__iter__()')
         pv = pvoc(self.win_s, self.hop_s)
-        print('        Created Phase Vocoder (pv = pvoc(self.win_s, self.hop_s)')
+        if self.verbose:
+            print('        Created Phase Vocoder (pv = pvoc(self.win_s, self.hop_s)')
 
         while True:
             samples, read = self.source() # Read the file

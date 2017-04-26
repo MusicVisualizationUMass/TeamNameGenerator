@@ -1,14 +1,22 @@
 #!/usr/bin/python3
 from pipeline.pipeline import Pipeline
+from argparse import ArgumentParser
 
 if __name__ == '__main__':
     from sys import argv
-    try:
-        filename = argv[1]
-    except:
-        print("Usage: pipeline filename")
-        from sys import exit
-        exit()
-    params = {'source':filename}
+    parser = ArgumentParser()
+    parser.add_argument("input", help = "audio file to visualize")
+    parser.add_argument("-o", "--output"   , default = "output.mp4", help = "output location")
+    parser.add_argument("-v", "--verbosity", action  = "store_true", help = "increase verbosity while rendering")
+    parser.add_argument("-V", "--visualization", default = "linear-oscillator", help = "increase verbosity while rendering")
+    parser.add_argument("-g", "--groovy", type = float, default = 5.0, help = "how groovy is your visualization??")
+    
+    args = parser.parse_args()
+    params = { 'source'        : args.input, 
+               'verbose'       : args.verbosity,
+               'visualization' : args.visualization,
+               'output'        : args.output,
+               'groovy'        : args.groovy,
+             }
     pipeline = Pipeline(params)
     pipeline.buildVisualization()

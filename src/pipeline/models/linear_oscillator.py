@@ -29,6 +29,7 @@ class LinearOscillatorModel(ModelledRepr):
 
     def __init__(self, 
                  pir,                      # A Parametric Representation
+                 input_fields,             # Parameters
                  sampleRate       = 24, 
                  sampleRange      = (None, None),
                  dataIn           = None, 
@@ -36,6 +37,7 @@ class LinearOscillatorModel(ModelledRepr):
                  parameters       = None, 
                  number_of_points = 512,
                  hook             = 121.0,
+                 vertical_hook    = 0.2,
                  data_shape       = (256,),
                  damping          = 0.95):
         '''
@@ -52,12 +54,15 @@ class LinearOscillatorModel(ModelledRepr):
         '''
 
 
+        self.input_fields = input_fields
+        self.verbose      = 'verbose' in input_fields and input_fields['verbose']
         shape = (number_of_points, 2)              # Shape of points
         self.number_of_points = number_of_points   # How many points in the line
         self.points = zeros(shape = shape, dtype = float)
         self.data_in_fps = dataInFPS  # Frames Per Second for input data
         self.fps        = sampleRate  # frames per second for OUR data
         self.hook       = hook        # hooks constant
+        self.vhook      = vertical_hook 
         self.data_shape = data_shape
         self.damping    = damping     # 0 = max damping; 1.0 = no damping
         self.dataIn     = iter(pir)
@@ -80,7 +85,9 @@ class LinearOscillatorModel(ModelledRepr):
         N           = self.number_of_points
         damping     = self.damping
         dshape      = self.data_shape
-        print( "Hook: {}, dt: {}, didt:{}, damping:{}".format(hook, dt, didt, damping))
+
+        if self.verbose:
+            print( "Hook: {}, dt: {}, didt:{}, damping:{}".format(hook, dt, didt, damping))
 
         # A1: Current Data
         # A2: Working Copy
@@ -96,7 +103,6 @@ class LinearOscillatorModel(ModelledRepr):
             # First, update A1
             for i, (norm, phase)in enumerate(data):
                 freq = int(10 * (N / (dshape[0] + 1)) * i) % N
-                # print ("i = {}, freq = {}, val = {}".format(i, freq, val))
                 # We update our current data's velocity at the appropriate place
                 A1[freq][1] += 90 * cos(phase) * norm * didt   # velocity += acceleration * delta t
 
@@ -111,7 +117,7 @@ class LinearOscillatorModel(ModelledRepr):
 
                 F_l = hook * (y_l - y)  # Force Right
                 F_r = hook * (y_r - y)  # Force Left
-                F_v = -0.15 * hook * y  # Vertical Force
+                F_v = - self.vhook * hook * y  # Vertical Force
                 F = (F_l + F_r + F_v)
 
                 delta_v = F * didt
