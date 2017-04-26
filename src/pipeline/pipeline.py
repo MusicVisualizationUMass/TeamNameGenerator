@@ -128,9 +128,9 @@ class Pipeline(object):
         dataInFPS = phvoc.dataInFPS # XXX: This should be automatic
 
         sandModel = SubSandpileModel(
+            
             sampleRate       = 24,      # Visual sample rate
             dataInFPS        = 24,      # Data sample rate (to generate visual)
-            dataIn           = dataIn,
             data_shape       = (256, ),
             size             = 10,
             subScale         = 0.5)

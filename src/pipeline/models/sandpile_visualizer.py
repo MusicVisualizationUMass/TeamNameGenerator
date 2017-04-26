@@ -1,4 +1,4 @@
-from ir import ModelledRepr
+from pipeline.ir import ModelledRepr, VisualizableMixin
 import numpy as np
 import matplotlib.pyplot as plt
 #from moviepy.editor import *
