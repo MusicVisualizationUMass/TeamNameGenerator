@@ -32,9 +32,9 @@ class SubSandpileModel(ModelledRepr):
 
         super(ModelledRepr, self).__init__(sampleRate=sampleRate,
                                            sampleRange=sampleRange,
-                                           dataIn=dataIn,
                                            parameters=parameters)
 
+        self.input_fields = input_fields
         self.verbose = 'verbose' in input_fields and input_fields['verbose']
         self.data_in_fps = dataInFPS  # Frames Per Second for input data
         self.fps = sampleRate  # frames per second for OUR data
@@ -67,7 +67,6 @@ class SubSandpileModel(ModelledRepr):
             cache[i] = Sandpile(subSize,subSize, fill=i+3) + Sandpile(subSize, subSize)
 
         while True:             
-            start = time.time()
             data = next(self.dataIn)
 
             output = np.zeros((size * subSize, size * subSize))

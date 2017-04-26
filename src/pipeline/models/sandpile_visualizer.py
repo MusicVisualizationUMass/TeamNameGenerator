@@ -12,22 +12,15 @@ class SubSandpileVisualizer(VisualizableMixin):
 		size = self.model.size
 		A = np.zeros(shape=())
 
-		#minVal = min(min(frame))
-		#maxVal = max(max(frame))
-
-		#image = Image.fromarray(frame.astype('uint8'), 'RGB')
-		#frame = [x-minVal for x in frame]	#remove 
-		#frame_n = frame/frame.max(axis=0)	#normalize frame
-		im = Image.fromarray(np.uint8(cm.gist_earth(frame_n)*255))
 		return im
 
-	def visualize(self):
+	def visualize(self, width = 100, height = 100):
 		result = []
 
 		#I = list(iter(self.model))
 		I = iter(self.model)
 		for frame in I:
-			result.append(make_frame(frame))
+			result.append(self.make_frame(frame))
 
 		#isc = ImageSequenceClip(result, fps = 24)
 		#isc.write_videofile('movie.mp4', fps=24)
