@@ -101,3 +101,4 @@ class SubSandpileModel(ModelledRepr):
                         for y in range(0, subSize):
                             output[x + xOffset][y + yOffset] = sandpile[x][y]
             yield(output)
+
