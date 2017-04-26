@@ -26,7 +26,7 @@ class SubSandpileVisualizer(VisualizableMixin):
 
 		#I = list(iter(self.model))
 		I = iter(self.model)
-		for frame in I
+		for frame in I:
 			result.append(make_frame(frame))
 
 		#isc = ImageSequenceClip(result, fps = 24)
