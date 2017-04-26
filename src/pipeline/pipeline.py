@@ -99,11 +99,11 @@ class Pipeline(object):
                 sampleRate       = 24,         # Visual sample rate
                 dataInFPS        = dataInFPS,  # Data sample rate (to generate visual)
                 number_of_points = 256,        # how many points in simulation?
-                hook             = 221.0,
-                vertical_hook    = 0.5,
+                hook             = 821.0,
+                vertical_hook    = .15,
                 data_shape       = (256, ),
                 damping          = 0.92)
         if self.verbose:
             print("Creating VIR")
-        lovis = LinearOscillatorVisualizer(linos)
+        lovis = LinearOscillatorVisualizer(linos, mode = 'dots')
         return lovis
