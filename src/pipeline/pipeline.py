@@ -133,7 +133,7 @@ class Pipeline(object):
             sampleRate       = 24,      # Visual sample rate
             dataInFPS        = 24,      # Data sample rate (to generate visual)
             data_shape       = (256, ),
-            size             = 10,
+            size             = 20,
             subScale         = 0.5)
 
         if self.verbose:
