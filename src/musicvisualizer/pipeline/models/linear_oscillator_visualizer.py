@@ -1,4 +1,4 @@
-from pipeline.ir import VisualizableMixin
+from musicvisualizer.pipeline.ir import VisualizableMixin
 from numpy import zeros
 import numpy as np
 from math import sin, cos, atan, pi

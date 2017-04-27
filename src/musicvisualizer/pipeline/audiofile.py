@@ -4,7 +4,7 @@ define the AudioFile class.
 TODO: 
     * Incorporate aubio library
 '''
-from pipeline.audiosource import AudioSource
+from musicvisualizer.pipeline.audiosource import AudioSource
 
 class AudioFile(AudioSource):
     def __init__(self, filepath):

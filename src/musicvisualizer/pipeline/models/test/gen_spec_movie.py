@@ -1,7 +1,7 @@
 from aubio import pvoc, source, float_type
 from numpy import zeros, log10, vstack
 import matplotlib.pyplot as plt
-from pipeline.models.linear_oscillator import LinearOscillatorModel
+from musicvisualizer.pipeline.models.linear_oscillator import LinearOscillatorModel
 from sys import argv
 from moviepy.editor import *
 

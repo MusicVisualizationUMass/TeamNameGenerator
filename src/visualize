@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from pipeline.pipeline import Pipeline
+from musicvisualizer.pipeline.pipeline import Pipeline
 from argparse import ArgumentParser
 
 if __name__ == '__main__':

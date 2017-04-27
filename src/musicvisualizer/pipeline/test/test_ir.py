@@ -1,5 +1,5 @@
 import unittest as ut
-from pipeline.ir import (IntermediateRepr, AudioRepr, ParametricRepr,
+from musicvisualizer.pipeline.ir import (IntermediateRepr, AudioRepr, ParametricRepr,
                          ModelledRepr)
 
 class TestIR(ut.TestCase):

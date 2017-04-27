@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from pipeline.models.linear_oscillator import LinearOscillatorModel
+from musicvisualizer.pipeline.models.linear_oscillator import LinearOscillatorModel
 import matplotlib.pyplot as plt
 #plt.style.use('ggplot')
 

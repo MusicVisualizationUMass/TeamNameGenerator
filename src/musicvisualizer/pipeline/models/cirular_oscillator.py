@@ -7,7 +7,7 @@ update/expand/tweak ModelledRepr based on this implementation to make further
 extensions easier.
 '''
 
-from pipeline.ir import ModelledRepr
+from musicvisualizer.pipeline.ir import ModelledRepr
 
 class CircularOscillatorModel(ModelledRepr):
     # TODO: include params for ModelledRepr

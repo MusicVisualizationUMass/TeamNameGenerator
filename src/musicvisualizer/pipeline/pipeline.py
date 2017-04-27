@@ -6,7 +6,7 @@ Author: Benjamin Kushigian
 
 '''
 
-from pipeline.mp3_to_wav import mp3_to_wav
+from musicvisualizer.pipeline.mp3_to_wav import mp3_to_wav
 from aubio import source
 from moviepy.editor import *
 

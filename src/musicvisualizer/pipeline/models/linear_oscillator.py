@@ -16,7 +16,7 @@ update/expand/tweak ModelledRepr based on this implementation to make further
 extensions easier.
 '''
 
-from pipeline.ir import ModelledRepr
+from musicvisualizer.pipeline.ir import ModelledRepr
 import numpy as np
 from numpy import ndarray, full, zeros
 from math import sin, cos, sqrt, atan, pi
