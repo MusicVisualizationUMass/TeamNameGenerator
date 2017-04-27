@@ -1,3 +1,7 @@
+''' 
+make_frames.py: this script uses moviepy and a frame generator to make a basic
+mp4 file. This outlines basic usage
+'''
 from moviepy.editor import *
 import proto.moviepy.framegen as fg
 
