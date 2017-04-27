@@ -79,9 +79,9 @@ class Pipeline(object):
                 clip.write_videofile(output, fps = 24)
 
     def buildLinearOscillatorVisualizer(self):
-        from pipeline.ir import PhaseVocPR, AudioRepr
-        from pipeline.models.linear_oscillator import LinearOscillatorModel
-        from pipeline.models.linear_oscillator_visualizer import LinearOscillatorVisualizer
+        from musicvisualizer.pipeline.ir import PhaseVocPR, AudioRepr
+        from musicvisualizer.pipeline.models.linear_oscillator import LinearOscillatorModel
+        from musicvisualizer.pipeline.models.linear_oscillator_visualizer import LinearOscillatorVisualizer
         
         if self.verbose:
             print("Creating AIR")
