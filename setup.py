@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except:
+    from distutils.core import setup
+
 
 setup( name         = 'musicvisualizer'
      , version      = '1.0'
@@ -13,9 +17,9 @@ setup( name         = 'musicvisualizer'
                         'pipeline'        : 'src/musicvisualizer/pipeline'
                       , 'ui'              : 'src/musicvisualizer/ui'
                       }
-     , install_requires = [ 'aubio',
-                            'pydub',
+     , install_requires = [ 'numpy',
+                            'aubio',
                             'moviepy',
-                            'numpy'
+                            'pydub'
                            ]
      )
