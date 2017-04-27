@@ -7,9 +7,8 @@ setup( name         = 'musicvisualizer'
      , description  = 'Visualizer for mp3s'
      , author       = 'Fedore Arkhipov, Ben Guinsburg, Ben Kushigian, Thomas Peck, Sam Remis, Ivan Siryk'
      , author_email = 'bkushigian@gmail.com'
-     , packages     = ['pipeline', 'ui', 'test']
+     , packages     = ['pipeline', 'ui']
      , package_dir =  { 'pipeline' : 'src/pipeline'
                       , 'ui'       : 'src/ui'
-                      , 'test'     : 'src/test'
                       }
      )
