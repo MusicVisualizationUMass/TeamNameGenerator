@@ -8,9 +8,10 @@ setup( name         = 'musicvisualizer'
      , author       = 'Fedore Arkhipov, Ben Guinsburg, Ben Kushigian, Thomas Peck, Sam Remis, Ivan Siryk'
      , author_email = 'bkushigian@gmail.com'
      , url          = 'https://github.com/MusicVisualizationUMass/TeamNameGenerator'
-     , packages     = ['pipeline', 'ui']
-     , package_dir =  { 'pipeline' : 'src/pipeline'
-                      , 'ui'       : 'src/ui'
+     , packages     = [ 'musicvisualizer', 'pipeline', 'ui']
+     , package_dir =  { 'musicvisualizer' : 'src/musicvisualizer',
+                        'pipeline'        : 'src/musicvisualizer/pipeline'
+                      , 'ui'              : 'src/musicvisualizer/ui'
                       }
      , install_requires = [ 'aubio',
                             'pydub',
