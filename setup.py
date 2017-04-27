@@ -7,8 +7,14 @@ setup( name         = 'musicvisualizer'
      , description  = 'Visualizer for mp3s'
      , author       = 'Fedore Arkhipov, Ben Guinsburg, Ben Kushigian, Thomas Peck, Sam Remis, Ivan Siryk'
      , author_email = 'bkushigian@gmail.com'
+     , url          = 'https://github.com/MusicVisualizationUMass/TeamNameGenerator'
      , packages     = ['pipeline', 'ui']
      , package_dir =  { 'pipeline' : 'src/pipeline'
                       , 'ui'       : 'src/ui'
                       }
+     , install_requires = [ 'aubio',
+                            'pydub',
+                            'moviepy',
+                            'numpy'
+                           ]
      )
