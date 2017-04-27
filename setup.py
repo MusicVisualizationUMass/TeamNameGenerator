@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup( name         = 'Music Visualizer UMass'
+setup( name         = 'musicvisualizer'
      , version      = '1.0'
      , description  = 'Visualizer for mp3s'
      , author       = 'Fedore Arkhipov, Ben Guinsburg, Ben Kushigian, Thomas Peck, Sam Remis, Ivan Siryk'
