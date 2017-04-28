@@ -52,6 +52,7 @@ Builder.load_string("""
 
 class MyWidget(FloatLayout):
 
+    # TODO: Fix static groove to be class-wide instance
     groove = 0
     file = None
     def setGroovyness(self, groovyness):
@@ -65,6 +66,7 @@ class MyWidget(FloatLayout):
         print('The Visualize Button is being pressed')
 
         # build InputFields
+        # TODO: Update inputfields to an actual Class? 
         inputfields = { 'groovyness'  : float(MyWidget.groove),
                'source'      : file
              }
