@@ -3,6 +3,7 @@
 MEDIAURL="benkushigian.com/musicvisualizer/media"
 
 declare -a mpegs=("A440.mp3" 
+                  "A440_Against_770.mp3"
                   "A440_With_E660_Pulse.mp3"
                   # "Noish.mp3" 
                   # "StuffnStuff.mp3" 
