@@ -17,7 +17,7 @@ installed with
 
 You should be good (hopefully). However, if for whatever reason this _doesn't_
 work (and you don't feel like fiddling) you can run this on a 
-[sanitized install of Lubuntu](http://benkushigian.com/musicvisualizer/virtualbox-snapshots/mvp-installer.tar.gz)
+[sanitized install of Lubuntu](http://benkushigian.com/musicvisualizer/virtualbox-snapshots/MV-LinuxInstaller.tar.gz)
 through Virtual Box.
 
 ## Running
