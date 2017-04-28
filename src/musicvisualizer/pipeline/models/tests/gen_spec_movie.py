@@ -1,3 +1,7 @@
+'''
+This generates the first spectrogram movie, trying to output audio. This is the
+first fully functional prototype but is no longer needed.
+'''
 from aubio import pvoc, source, float_type
 from numpy import zeros, log10, vstack
 import matplotlib.pyplot as plt

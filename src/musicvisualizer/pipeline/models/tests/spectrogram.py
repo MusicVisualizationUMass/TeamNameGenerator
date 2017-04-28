@@ -1,3 +1,8 @@
+'''
+Updated from aubio's spectrogram demo, this builds a prototype exploring the
+interface between aubio and our software. No longer needed but kept for
+posterity. Can be phased out at any time.
+'''
 from aubio import pvoc, source, float_type
 from numpy import zeros, log10, vstack
 import matplotlib.pyplot as plt
