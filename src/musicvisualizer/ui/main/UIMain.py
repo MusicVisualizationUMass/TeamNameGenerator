@@ -76,3 +76,4 @@ class MyWidget(FloatLayout):
 class MyApp(App):
     def build(self):
         return MyWidget()
+

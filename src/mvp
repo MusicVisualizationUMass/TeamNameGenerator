@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+from musicvisualizer.ui.main.UIMain import MyApp
+
+if __name__ == '__main__':
+    MyApp().run()
+
