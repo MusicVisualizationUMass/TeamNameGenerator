@@ -68,8 +68,8 @@ class MyWidget(FloatLayout):
         # build InputFields
         # TODO: Update inputfields to an actual Class? 
         inputfields = { 'groovyness'  : float(MyWidget.groove),
-               'source'      : file
-             }
+                        'source'      : MyWidget.file
+                      }
 
         # start the pipeline process
         p = Pipeline(inputfields)
