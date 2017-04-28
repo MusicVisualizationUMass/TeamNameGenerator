@@ -65,7 +65,7 @@ class MyWidget(FloatLayout):
         print('The Visualize Button is being pressed')
 
         # build InputFields
-        inputfields = { 'groovyness'  : float(groove),
+        inputfields = { 'groovyness'  : float(MyWidget.groove),
                'source'      : file
              }
 
