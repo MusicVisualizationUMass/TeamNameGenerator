@@ -18,7 +18,7 @@ installed with
 You should be good (hopefully). However, if for whatever reason this _doesn't_
 work (and you don't feel like fiddling) you can run this on a 
 [sanitized install of Lubuntu](http://benkushigian.com/musicvisualizer/virtualbox-snapshots/MV-LinuxInstaller.tar.gz)
-through Virtual Box.
+through Virtual Box. Note that the credentials are `user/password`.
 
 ## Running
 There are two ways to run MV; the first is through a command line interface, and
