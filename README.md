@@ -10,6 +10,8 @@ Currently our install script ain't perfect. First, make sure you have `pip3`
 installed with
 
     sudo apt-get install python3-pip    # Get pip3
+    sudo pip3 install --upgrade pip     # Get the latest version of pip
+    sudo apt-get install ffmpeg         # Does stuff with mpegs
     sudo pip3 install numpy             # Numpy has to be installed seperately
     sudo setup.py install               # Run the install script
 
