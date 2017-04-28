@@ -9,8 +9,8 @@ class TestLinearOscillator(ut.TestCase):
     def setUp(self):
         from os.path import join
         source = join('..','media', 'sampler.mp3')
-        source_wav = mp3_to_wav(source)
-        self.source_wav = source_wav
+        source_wav = mp3_to_wav(source)  # Create a temp file
+        self.source_wav = source_wav     # Store for later deletion!
         self.input_fields = {'groovyness' : 0}
         self.air   = AudioRepr (source_wav, self.input_fields)
         self.phvoc = PhaseVocPR(self.air  , self.input_fields)
