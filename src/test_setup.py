@@ -15,7 +15,7 @@ class TestEnviron(ut.TestCase):
         media = os.path.join(cwd, '..', 'media')
         dl    = os.path.join(media, 'download.sh')
 
-        sp.run('cd {} && {} -s'.format(media, dl), shell=True)
+        #sp.run('cd {} && {} -s'.format(media, dl), shell=True)
         print('Downloading sample inputs')
         sampler = os.path.join(media, 'sampler.mp3')
         # TODO: assert that file '../media/sampler.mp3' exists

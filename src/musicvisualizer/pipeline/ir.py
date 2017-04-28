@@ -87,10 +87,20 @@ class AudioRepr(IntermediateRepr):
 
         self.input_fields = input_fields
         verbose = 'verbose' in input_fields and input_fields['verbose']
-
         if verbose:
             print('[DEBUG] Creating AudioRepr instance')
         self._audioFile  = audioFile
+        self._sampleRate = sampleRate
+        self._sampleMin  = sampleRange[0]
+        self._sampleMax  = sampleRange[1]
+        self._sampleType = sampleType
+        self._bitDepth   = bitDepth
+
+        if sampleRange[0] is None:
+            self._sampleMin = 0
+        if sampleRange[1] is None:
+            self._sampleMax = 2**bitDepth
+
         self.win_s  = 512           # fft window size
         self.hop_s  = self.win_s // 2    # hop size
         

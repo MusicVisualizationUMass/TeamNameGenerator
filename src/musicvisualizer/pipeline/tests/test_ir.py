@@ -1,6 +1,8 @@
 import unittest as ut
 from musicvisualizer.pipeline.ir import (IntermediateRepr, AudioRepr, ParametricRepr,
-                         ModelledRepr)
+                         ModelledRepr, PhaseVocPR)
+
+from musicvisualizer.pipeline.mp3_to_wav import mp3_to_wav
 
 class TestIR(ut.TestCase):
     
@@ -63,17 +65,29 @@ class TestAudioRepr(TestIR):
     '''This extends TestIR...'''
     def test_air_constructor_default_vals(self):
         try:
-            air = AudioRepr()
-            self.assertEqual(air._sampleRate, 44100)
+            from os.path import join
+            source = join('..','media', 'sampler.mp3')
+            source_wav = mp3_to_wav(source)
+            air = AudioRepr(source_wav, {})
+            self.assertEqual(air._sampleRate, 0    )
             self.assertEqual(air._bitDepth  , 16   )
             self.assertEqual(air._sampleMin , 0    )
             self.assertEqual(air._sampleMax , 2**16)
             self.assertEqual(air._sampleType, int  )
-            self.assertEqual(air._audioFile , None )
+            self.assertEqual(air._audioFile , source_wav )
 
         except Exception as e:
             print("Caught Exception: {}".format(e))
+            # XXX How do I report exception to unittest?
             self.assertFalse(True)
         
+class TestPhaseVocPR(TestIR):
+    def setUp(self):
+        from os.path import join
+        source = join('..','media', 'sampler.mp3')
+        source_wav = mp3_to_wav(source)
+        self.air = AudioRepr(source_wav, {})
 
+    def test_constructor(self):
+        phvoc = PhaseVocPR(self.air, {})
 
