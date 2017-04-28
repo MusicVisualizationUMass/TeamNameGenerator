@@ -5,11 +5,17 @@ MEDIAURL="benkushigian.com/musicvisualizer/media"
 declare -a mpegs=("A440.mp3" 
                   "A440_Against_770.mp3"
                   "A440_With_E660_Pulse.mp3"
+                  "sampler.mp3"
                   # "Noish.mp3" 
                   # "StuffnStuff.mp3" 
                   # "TicoTico.mp3" 
                   # "WesternWaltz.mp3"
                  )
+
+declare -a samples=("A440.mp3" 
+                    "sampler.mp3"
+                    "A440_Against_770.mp3"
+                   )
 
 declare -a wavs=( "440Hz_With_660Hz-Pulse.wav" 
                   "A1760.wav" 
@@ -30,11 +36,12 @@ declare -a wavs=( "440Hz_With_660Hz-Pulse.wav"
 # TEST IF there are no args
 if [ $# -eq 0 ]; then
     echo "Must provide an argument"
-    echo "    -a|--all    download all files from remote"
-    echo "    -M|--mpegs  only download mp3s"
-    echo "    -w|--wavs   only download wavs"
+    echo "    -a|--all        download all files from remote"
+    echo "    -M|--mpegs      only download mp3s"
+    echo "    -w|--wavs       only download wavs"
     echo "    -u|--url www.path/to/file.mp3     download file from the web"
-    echo "    --clean     remove all mp3s and wavs from media/"
+    echo "    -c|--clean      remove all mp3s and wavs from media/"
+    echo "    -s|--sampler    only download short sample mp3s"
 fi
 
 while [[ $# -gt 0 ]]
@@ -95,6 +102,16 @@ do
             echo "Removing all audio files"
             rm *.mp3 
             rm *.wav
+            ;;
+        -s|--sampler)    # Download sample mp3s
+            for sample in "${samples[@]}"
+            do
+                if [ ! -f "$sample" ]
+                then 
+                    wget "$MEDIAURL/$sample"
+                fi
+            done
+            exit
             ;;
         *)  # Unknown option, exit
             echo "Unknown option $1. Exiting"
