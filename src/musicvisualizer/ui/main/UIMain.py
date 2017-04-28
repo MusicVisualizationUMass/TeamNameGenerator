@@ -12,9 +12,8 @@ from kivy.uix.floatlayout import FloatLayout
 import kivy
 import os
 
-import sys; sys.path.append('pipeline/')
-from InputFields import InputFields
-from pipeline import Pipeline
+import sys
+from musicvisualizer.pipeline.pipeline import Pipeline
 
 Builder.load_string("""
 <MyWidget>:
@@ -66,17 +65,14 @@ class MyWidget(FloatLayout):
         print('The Visualize Button is being pressed')
 
         # build InputFields
-        IF = InputFields()
-        IF.groovyness = float(groove)
-        IF.source = file
+        inputfields = { 'groovyness'  : float(groove),
+               'source'      : file
+             }
 
         # start the pipeline process
-        p = Pipeline(IF)
+        p = Pipeline(inputfields)
         p.buildVisualization()
 
 class MyApp(App):
     def build(self):
         return MyWidget()
-
-if __name__ == '__main__':
-    MyApp().run()
