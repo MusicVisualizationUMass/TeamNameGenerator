@@ -67,7 +67,10 @@ class LinearOscillatorModel(ModelledRepr):
         self.damping    = damping     # 0 = max damping; 1.0 = no damping
         self.dataIn     = iter(pir)
         self.pir        = pir
+        self.groove     = 2
 
+        if 'groovyness' in self.input_fields:
+            self.groove = self.input_fields['groovyness']
 
         # Set up data-in
 
@@ -85,6 +88,7 @@ class LinearOscillatorModel(ModelledRepr):
         N           = self.number_of_points
         damping     = self.damping
         dshape      = self.data_shape
+        groove      = self.groove + 1 # Make sure we don't get any zero values!
 
         if self.verbose:
             print( "Hook: {}, dt: {}, didt:{}, damping:{}".format(hook, dt, didt, damping))
@@ -115,9 +119,9 @@ class LinearOscillatorModel(ModelledRepr):
                 y   = A1[ i ][0]
                 y_r = A1[(i+1) % N][0]
 
-                F_l = hook * (y_l - y)  # Force Right
-                F_r = hook * (y_r - y)  # Force Left
-                F_v = - self.vhook * hook * y  # Vertical Force
+                F_l = groove * hook * (y_l - y)  # Force Right
+                F_r = groove * hook * (y_r - y)  # Force Left
+                F_v = - self.vhook * groove * hook * y  # Vertical Force
                 F = (F_l + F_r + F_v)
 
                 delta_v = F * didt
