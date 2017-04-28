@@ -3,6 +3,7 @@ from musicvisualizer.pipeline.ir import (IntermediateRepr, AudioRepr, Parametric
                          ModelledRepr, PhaseVocPR)
 
 from musicvisualizer.pipeline.mp3_to_wav import mp3_to_wav
+import os
 
 class TestIR(ut.TestCase):
     
@@ -75,6 +76,8 @@ class TestAudioRepr(TestIR):
             self.assertEqual(air._sampleMax , 2**16)
             self.assertEqual(air._sampleType, int  )
             self.assertEqual(air._audioFile , source_wav )
+            os.remove(source_wav)    
+            # XXX: This should really be factored out into a setUp/tearDown pair of functions function
 
         except Exception as e:
             print("Caught Exception: {}".format(e))
@@ -86,8 +89,12 @@ class TestPhaseVocPR(TestIR):
         from os.path import join
         source = join('..','media', 'sampler.mp3')
         source_wav = mp3_to_wav(source)
+        self.source_wav = source_wav
         self.input_fields = {'groovyness' : 0.0 }
         self.air = AudioRepr(source_wav, self.input_fields)
+
+    def tearDown(self):
+        os.remove(self.source_wav)
 
     def test_constructor(self):
         phvoc = PhaseVocPR(self.air, self.input_fields)
