@@ -3,6 +3,7 @@
 try:
     from setuptools import setup
 except:
+    print("[!] Warning: unable to import setuptools.setup. Attempting to continue with distutils.core.setup")
     from distutils.core import setup
 
 
