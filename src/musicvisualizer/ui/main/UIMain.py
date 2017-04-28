@@ -60,7 +60,7 @@ class MyWidget(FloatLayout):
 
     def selected(self, filename):
         print('selected: %s' % filename[0])
-        file = filename[0]
+        MyWidget.file = filename[0]
 
     def callback(instance):
         print('The Visualize Button is being pressed')
