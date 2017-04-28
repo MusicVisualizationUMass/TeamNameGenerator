@@ -6,7 +6,14 @@ mp4 videos.  This is currently in alpha development but is showing promise,
 executing it's main goal of visualizing music.
 
 ## Installing
-Run `sudo setup.py install` and good things happen (hopefully)!
+Currently our install script ain't perfect. First, make sure you have `pip3`
+installed with
+
+    sudo apt-get install python3-pip    # Get pip3
+    sudo pip3 install numpy             # Numpy has to be installed seperately
+    sudo setup.py install               # Run the install script
+
+You should be good (hopefully).
 
 ## Running
 There are two ways to run MV; the first is through a command line interface, and
