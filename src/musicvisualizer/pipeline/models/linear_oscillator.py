@@ -89,9 +89,15 @@ class LinearOscillatorModel(ModelledRepr):
         damping     = self.damping
         dshape      = self.data_shape
         groove      = self.groove + 1 # Make sure we don't get any zero values!
+        
 
         if self.verbose:
-            print( "Hook: {}, dt: {}, didt:{}, damping:{}".format(hook, dt, didt, damping))
+            print( "groove: {}, hook: {}, dt: {}, didt: {}, damping: {}".format(groove, hook, dt, didt, damping))
+
+        hook = hook * groove
+        tmp = (1.0 - damping)/12.0   # MAGIC NUMBER (not really, I'm just too lazy
+                                     #               to explain it)
+        damping = damping + tmp * groove
 
         # A1: Current Data
         # A2: Working Copy
@@ -109,7 +115,6 @@ class LinearOscillatorModel(ModelledRepr):
                 freq = int(10 * (N / (dshape[0] + 1)) * i) % N
                 # We update our current data's velocity at the appropriate place
                 A1[freq][1] += 90 * cos(phase) * norm * didt   # velocity += acceleration * delta t
-
 
             # Update velocity of points
             for i in range(N):  
