@@ -15,7 +15,11 @@ installed with
     sudo pip3 install numpy             # Numpy has to be installed seperately
     sudo setup.py install               # Run the install script
 
-You should be good (hopefully).
+You should be good (hopefully). However, if for whatever reason this _doesn't_
+work (and you don't feel like fiddling) you can run this on a 
+[sanitized install of Lubuntu]
+(http://benkushigian.com/musicvisualizer/virtualbox-snapshots/mvp-installer.tar.gz)
+through Virtual Box.
 
 ## Running
 There are two ways to run MV; the first is through a command line interface, and
