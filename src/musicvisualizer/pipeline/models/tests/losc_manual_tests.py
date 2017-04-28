@@ -1,4 +1,9 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
+'''A set of manual tests to make sure bits and pieces are working. Not part of
+the general testing framework but kept for now in case there is some useful data
+here later
+'''
 from musicvisualizer.pipeline.models.linear_oscillator import LinearOscillatorModel
 import matplotlib.pyplot as plt
 #plt.style.use('ggplot')
