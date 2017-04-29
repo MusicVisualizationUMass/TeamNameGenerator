@@ -68,10 +68,12 @@ class Pipeline(object):
         frames = visualizer.visualize()
         clip   = ImageSequenceClip(frames, fps = 24)
         if self.visualization == 'sandpile':
-            clip = clip.resize((720, 512))
-            #song = AudioSegment.from_wav(self.source_wav)
-            #audio_len = len(song) / 1000
-            #clip = clip.fl_time(lambda t: t * (clip.duration / audio_len))
+            clip_r = clip.resize((720, 512))
+            song = AudioSegment.from_wav(self.source_wav)
+            audio_len = len(song) / 1000
+            clip = clip.fl_time(lambda t: t * (clip.duration / audio_len))
+            clip = clip_r.set_duration(audio_len)
+            print("duration: ", clip.duration)
 
         if self.verbose:
             print('Pipeline.makeMovie()')
@@ -141,7 +143,7 @@ class Pipeline(object):
             dataInFPS        = dataInFPS,      # Data sample rate (to generate visual)
             data_shape       = (256, ),
             size             = 10,
-            fill             = 4,
+            fill             = 5,
             subScale         = 0.5)
 
         if self.verbose:
