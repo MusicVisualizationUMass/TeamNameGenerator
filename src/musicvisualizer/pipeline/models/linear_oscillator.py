@@ -70,7 +70,9 @@ class LinearOscillatorModel(ModelledRepr):
         self.groove     = 2
 
         # Make sure we have the proper Parametric Repr
-        assert(isinstance(pir, PhaseVocPR), "LinearOscillatorModel expects a PhaseVocPR instance")
+        if not isinstance(pir, PhaseVocPR): 
+            raise RuntimeError("Invalid Argument: expected PhaseVocPR but got {}".format(type(pir))) 
+
         if 'groovyness' in self.input_fields:
             self.groove = self.input_fields['groovyness']
 

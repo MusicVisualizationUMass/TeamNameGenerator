@@ -37,5 +37,6 @@ class TestLinearOscillator(ut.TestCase):
             try:
                 linosc = LinearOscillatorModel(pir, self.input_fields)
             except Exception as e:
+                print(e)
                 raise e
         self.assertRaises(Exception, this_should_raise)
