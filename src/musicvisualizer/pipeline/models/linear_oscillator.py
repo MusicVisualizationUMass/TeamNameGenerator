@@ -207,3 +207,9 @@ class LinearOscillatorModel(ModelledRepr):
 
             result.append(arr)
         return result
+
+    def __str__(self):
+        return "<LinearOscillatorModel>"
+
+    def __repr__(self):
+        return str(self)
