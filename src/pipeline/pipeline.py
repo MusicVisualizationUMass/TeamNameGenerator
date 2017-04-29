@@ -7,6 +7,7 @@ Author: Benjamin Kushigian
 '''
 
 from pipeline.mp3_to_wav import mp3_to_wav
+from pydub import AudioSegment
 from aubio import source
 from moviepy.editor import *
 
@@ -66,6 +67,12 @@ class Pipeline(object):
         output = self.output
         frames = visualizer.visualize()
         clip   = ImageSequenceClip(frames, fps = 24)
+        if self.visualization == 'sandpile':
+            clip = clip.resize((720, 512))
+            #song = AudioSegment.from_wav(self.source_wav)
+            #audio_len = len(song) / 1000
+            #clip = clip.fl_time(lambda t: t * (clip.duration / audio_len))
+
         if self.verbose:
             print('Pipeline.makeMovie()')
             print('    output = {}'.format(output))
@@ -131,9 +138,10 @@ class Pipeline(object):
             pir              = phvoc,
             input_fields     = self.input_fields,
             sampleRate       = 24,      # Visual sample rate
-            dataInFPS        = 24,      # Data sample rate (to generate visual)
+            dataInFPS        = dataInFPS,      # Data sample rate (to generate visual)
             data_shape       = (256, ),
-            size             = 20,
+            size             = 10,
+            fill             = 4,
             subScale         = 0.5)
 
         if self.verbose:

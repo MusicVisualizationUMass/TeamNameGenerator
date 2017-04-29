@@ -1,19 +1,22 @@
 from pipeline.ir import ModelledRepr, VisualizableMixin
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import cm as cm, pyplot as plt, colors
 from math import atan, pi       # arctan normalizes
-#from moviepy.editor import *
-from PIL import Image
+
 
 class SubSandpileVisualizer(VisualizableMixin):
     def __init__(self, sandpile_model):
         self.model = sandpile_model
+        self.n = 0
 
-    def make_frame(self, frame):
+    def make_frame(self, frame, cmap=None, norm = None):
         '''Create a width x height x 3 ndarray'''
-        width, height = self.width, self.height
-        size = self.model.size
+
+        #width, height = self.width, self.height
+        width, height = len(frame), len(frame)
+        size = len(frame)   #self.model.size
         A = np.zeros(shape=( height, width, 3), dtype=np.uint8 )
+
         h, w = 0, 0    # How far have we tiled our _output_?
         # Get scaling factors for height and width
         hsf, wsf = height // size, width // size # height scaling factor, etc
@@ -21,32 +24,36 @@ class SubSandpileVisualizer(VisualizableMixin):
             for j in range(size): # traverse left to right
             # The following line _normalizes_ our input from 0 < val < ???
             # to 0 <= val <= 255, and gives it type int.
-                #print ("frame[i][j] =", frame[i][j])
-                val = int(255 * (2/pi)*atan(frame[i][j])) #     ^          ^     ^ #     |          |     atan ranges from 0 to pi/2
-                #     |          ranges from 0 to 1 
-                #     ranges from 0 to 255
+                val = int(255 * (2/pi)*atan(frame[i][j]))
                 for y in range(hsf):
                     for x in range(wsf):
+                        #val_c = cmap(val)
+                        #print("val2[0] =", val_c[0], "val2[1] =", val_c[1],"val2[2] =", val_c[2])
                         A[h + y][w + x][0] = val   # Red
-                        A[h + y][w + x][1] = val   # Green 
+                        A[h + y][w + x][1] = val   # Green
                         A[h + y][w + x][2] = val   # Blue
                 w += wsf
             h += hsf
             w = 0
-
+        print("n: ", self.n)
+        self.n+=1
         return A
 
-    def visualize(self, width = 100, height = 100):
+    def visualize(self, width = 720, height = 512):
         self.width, self.height = width, height
         result = []
 
-        #I = list(iter(self.model))
-        I = iter(self.model)
-        for frame in I:
-            result.append(self.make_frame(frame))
+        cmap = cm.get_cmap('jet')
+        norm = colors.Normalize(vmin=0.0, vmax=255.0)
 
-        #isc = ImageSequenceClip(result, fps = 24)
-        #isc.write_videofile('movie.mp4', fps=24)
+        I = list(iter(self.model))
+        for frame in I:
+            '''
+            plt.imshow(frame, interpolation='bilinear', aspect='auto')
+            plt.pause(0.01)  # Pause
+            plt.cla()  # Clear
+            '''
+            result.append(self.make_frame(frame=frame, cmap=cmap, norm=norm))
 
         return result
 

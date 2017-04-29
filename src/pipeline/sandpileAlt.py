@@ -41,6 +41,24 @@ class Sandpile:
         return s
 
     @classmethod
+    def from_list_no_check(cls, values):
+        """
+        Takes a 2D array of values and returns an equivalent Sandpile object
+        """
+        if not cls.is_grid(values):  # make sure the values or a grid
+            raise ValueError("'values' must be a rectangular shape")
+
+        if not cls.is_not_negative(values):  # no negative sand allowed
+            raise ValueError("'values' must be positive or zero")
+
+        s = Sandpile()
+        s.table = values
+        s.rows = len(values)
+        s.cols = len(values[0])
+
+        return s
+
+    @classmethod
     def is_grid(cls, values):
         for row in values:
             if len(row) != len(values[0]):
@@ -71,10 +89,8 @@ class Sandpile:
     def __add__(self, other):
         return Sandpile.from_list([[self[x][y]+other[x][y] for y in range(self.cols)] for x in range(self.rows)])
 
-    def make_gen(self):
-        while True:
-            check_over_flow(self)
-            yield(self)
+    def addNoCheck(self, other):
+        return Sandpile.from_list_no_check([[self[x][y]+other[x][y] for y in range(self.cols)] for x in range(self.rows)])
 
     def check_over_flow(self):
         for i, row in enumerate(self.table):
