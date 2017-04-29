@@ -3,6 +3,7 @@ import os
 from musicvisualizer.pipeline.ir import (IntermediateRepr, AudioRepr, ParametricRepr,
                                          ModelledRepr, PhaseVocPR)
 from musicvisualizer.pipeline.models.linear_oscillator import LinearOscillatorModel
+from musicvisualizer.pipeline.mp3_to_wav import mp3_to_wav
 
 class TestLinearOscillator(ut.TestCase):
     
