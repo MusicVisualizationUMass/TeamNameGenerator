@@ -29,3 +29,12 @@ class TestLinearOscillator(ut.TestCase):
     def test_constructor_type2(self):
         linosc = LinearOscillatorModel(self.phvoc, self.input_fields)
         self.assertIsInstance(linosc, ModelledRepr)
+
+    def test_construtor_bad_PIR(self):
+        pir = ParametricRepr()
+        def this_should_raise():
+            try:
+                linosc = LinearOscillatorModel(pir, self.input_fields)
+            except Exception as e:
+                raise e
+        self.assertRaises(Exception, this_should_raise)
