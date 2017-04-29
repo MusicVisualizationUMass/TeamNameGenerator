@@ -16,7 +16,7 @@ update/expand/tweak ModelledRepr based on this implementation to make further
 extensions easier.
 '''
 
-from musicvisualizer.pipeline.ir import ModelledRepr
+from musicvisualizer.pipeline.ir import ModelledRepr, PhaseVocPR
 import numpy as np
 from numpy import ndarray, full, zeros
 from math import sin, cos, sqrt, atan, pi
@@ -40,6 +40,7 @@ class LinearOscillatorModel(ModelledRepr):
                  vertical_hook    = 0.2,
                  data_shape       = (256,),
                  damping          = 0.95):
+        # TODO: Update arguments docstring
         '''
         sampleRate: number of samples per second to be _emmited_
         sampleRange: (min,max) of possible values
@@ -52,8 +53,7 @@ class LinearOscillatorModel(ModelledRepr):
         data_shape: (number of points in data, data item size)
         damping: multiplicative factor to dampen velocities
         '''
-
-
+        
         self.input_fields = input_fields
         self.verbose      = 'verbose' in input_fields and input_fields['verbose']
         shape = (number_of_points, 2)              # Shape of points
@@ -69,6 +69,8 @@ class LinearOscillatorModel(ModelledRepr):
         self.pir        = pir
         self.groove     = 2
 
+        # Make sure we have the proper Parametric Repr
+        assert(isinstance(pir, PhaseVocPR), "LinearOscillatorModel expects a PhaseVocPR instance")
         if 'groovyness' in self.input_fields:
             self.groove = self.input_fields['groovyness']
 
